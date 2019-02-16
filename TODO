@@ -1,0 +1,14 @@
+Time to get Serious
+
+Here's a TODO for PyTrek
+- Add network client that's able to command the ship - DONE
+- Add GUI for warp and heading to helm
+- Add items that go on the map 
+- Allow the network client to change the main view to the map
+- Add spaceship model
+- Add space station model
+- Refueling & Weapon inventory
+- Skybox
+- Nebulas
+- Warp signature visual
+- Engineering module platformer
