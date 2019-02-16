@@ -81,16 +81,9 @@ class UIComponent(object):
         
         self.hoverStatus = False
         
-        def hoverToggle(h):
-            if (h != self.hoverStatus):
-                print("Hover status changed! Now:", h)
-                self.hoverStatus = h
-                
-        self.addHoverHandler(hoverToggle) 
-        
         
     def click(self):
-        if self.sendClick is not None: self.sendClick()
+        if hasattr(self, 'sendClick'): self.sendClick()
         
     def hover(self, hoverStatus):
         if self.sendHover is not None: self.sendHover(hoverStatus)
@@ -107,16 +100,14 @@ class UIComponent(object):
     def setResizeHandler(self, resizeFunc):
         self.sendResize = resizeFunc
         
-    def addHoverHandler(self, hoverFunc):
-        self.sendHover = hoverFunc
-        
-    # Handlers wrap any other code necessary and return a new function that can be set as the handler
-    def hover_handler(self, newFunc):
-        def newHandler(hoverStatus):
-            self.sendHover(hoverStatus)
-            newFunc(hoverStatus)
-        
-        return newHandler
+    def setHoverHandler(self, hoverFunc):
+        def newHandler(h):
+            if (h != self.hoverStatus):
+                self.hoverStatus = h
+                
+            hoverFunc(h)
+            
+        self.sendHover = newHandler
         
     def render(self, window):
         # Render as a square for the base UIComponent class
@@ -133,6 +124,7 @@ class UIButton(UIComponent):
         self.text = text
         self.sprite = pyglet.sprite.Sprite(img=ui_btn)
         self.sprite_hover = pyglet.sprite.Sprite(img=ui_btn_hover)
+        self.textElement = pyglet.text.Label(text=self.text, font_name='Arial', anchor_x="center", anchor_y="center")
         
         # Set the resize handler for the buttons in the User Interface
         def on_resize(width, height):
@@ -140,7 +132,19 @@ class UIButton(UIComponent):
             self.sprite.update(x=(self.xpos/100)*width, y=(self.ypos/100)*height, scale=(self.width/100*width)/self.sprite.width)
             self.sprite_hover.update(x=(self.xpos/100)*width, y=(self.ypos/100)*height, scale=(self.width/100*width)/self.sprite_hover.width)
             
+            # Placing of the text element
+            self.textElement.font_size = (self.height/100)*height/4
+            self.textElement.x = (self.xpos+(self.width/2))/100*width
+            self.textElement.y = (self.ypos+(self.height/2))/100*height
+            
+        def on_hover(hover):
+            if hover:
+                self.textElement.color = (0, 0, 0, 255)
+            else:
+                self.textElement.color = (255, 255, 255, 255)
+            
         self.setResizeHandler(on_resize)
+        self.setHoverHandler(on_hover)
         
         
     def setText(text):
@@ -152,4 +156,6 @@ class UIButton(UIComponent):
             self.sprite_hover.draw()
         else:
             self.sprite.draw()
+            
+        self.textElement.draw()
     

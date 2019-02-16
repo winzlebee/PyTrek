@@ -20,8 +20,8 @@ def onclick_mapBtn():
 
 # UI Components for the helm
 pt_ui_mapBtn = UserInterface.UIButton("mapBtn", "Map", 100-16, 100-8)
-pt_ui_visBtn = UserInterface.UIButton("mapBtn", "Visual", 100-16, 100-16)
-pt_ui_engBtn = UserInterface.UIButton("mapBtn", "Engineering", 100-16, 100-24)
+pt_ui_visBtn = UserInterface.UIButton("mapBtn", "Visual", 100-32, 100-8)
+pt_ui_engBtn = UserInterface.UIButton("mapBtn", "Engineering", 100-48, 100-8)
 pt_ui_mapBtn.setClickHandler(onclick_mapBtn)
 
 helm_ui.addComponent(pt_ui_mapBtn)
