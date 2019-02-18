@@ -151,21 +151,37 @@ class UINavElement(UIComponent):
         self.zoomLevel = level
         
     def render(self, window):
-        numLines = round(100/self.zoomLevel)
-        if numLines % 2 == 1:
-            numLines = numLines - 1
+        numLines = round(100/self.zoomLevel+2)
     
         lines = []
-        for y in range(1, numLines):
-            interval = (100/numLines)*y
-            lines.extend([(self.xpos/100*window.width)+(interval/100*(self.width/100*window.width)), (self.ypos+self.height)/100*window.height,
-                          (self.xpos/100*window.width)+(interval/100*(self.width/100*window.width)), (self.ypos)/100*window.height])
+        
+        # Center lines
+        lines.extend([(self.xpos+self.width/2)/(100*window.width), (self.ypos+self.height)/100*window.height,
+                           (self.xpos + self.width/2)/(100*window.width), (self.ypos)/100*window.height])
+                           
+        #lines.extend([(self.xpos+self.width)/(100*window.width), (self.ypos+self.height/2)/100*window.height,
+         #                  (self.xpos)/(100*window.width), (self.ypos+self.height/2)/100*window.height])
+        
+        for y in range(1, round(numLines/2)):
+            interval = (100/(100/self.zoomLevel))*y
+            
+            # Draw a line in the middle, then draw one either side
+            
+                           
+            lines.extend([((self.xpos+self.width/2)/100*window.width)+(interval/100*(self.width/100*window.width)), (self.ypos+self.height)/100*window.height,
+                          ((self.xpos+self.width/2)/100*window.width)+(interval/100*(self.width/100*window.width)), (self.ypos)/100*window.height])
                           
-            lines.extend([(self.xpos/100*window.width), (self.ypos)/100*window.height + (interval/100*(self.height/100*window.height)),
-                          ((self.xpos+self.width)/100*window.width), (self.ypos)/100*window.height + (interval/100*(self.height/100*window.height))])
+            lines.extend([((self.xpos+self.width/2)/100*window.width)-(interval/100*(self.width/100*window.width)), (self.ypos+self.height)/100*window.height,
+                          ((self.xpos+self.width/2)/100*window.width)-(interval/100*(self.width/100*window.width)), (self.ypos)/100*window.height])
+                          
+            lines.extend([((self.xpos+self.width)/100*window.width), (self.ypos+self.height/2)/100*window.height+(interval/100*(self.height/100*window.height)),
+                          ((self.xpos)/100*window.width),  (self.ypos+self.height/2)/100*window.height+(interval/100*(self.height/100*window.height))])
+                          
+            lines.extend([((self.xpos+self.width)/100*window.width), (self.ypos+self.height/2)/100*window.height-(interval/100*(self.height/100*window.height)),
+                          ((self.xpos)/100*window.width),  (self.ypos+self.height/2)/100*window.height-(interval/100*(self.height/100*window.height))])
     
         # Draw a grid, making sure that the specified zoom level of squares are displayed
-        pyglet.graphics.draw((numLines-1)*4, pyglet.gl.GL_LINES,
+        pyglet.graphics.draw((round(numLines/2)-1)*8+2, pyglet.gl.GL_LINES,
             ('v2f', lines))
                 
 class UIButton(UIComponent):
