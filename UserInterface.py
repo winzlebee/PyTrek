@@ -150,17 +150,27 @@ class UINavElement(UIComponent):
     def setZoomLevel(self, level):
         self.zoomLevel = level
         
+    # Zoom factor is how much we need to scale things that are on the map
+    def getZoomFactor(self):
+        return 100/self.zoomLevel
+        
     def render(self, window):
         numLines = round(100/self.zoomLevel+2)
     
         lines = []
         
         # Center lines
-        lines.extend([(self.xpos+self.width/2)/(100*window.width), (self.ypos+self.height)/100*window.height,
-                           (self.xpos + self.width/2)/(100*window.width), (self.ypos)/100*window.height])
+        center = [(self.xpos+self.width/2)/100*window.width, (self.ypos+self.height)/100*window.height,
+                  (self.xpos + self.width/2)/100*window.width, (self.ypos)/100*window.height,
+                  (self.xpos+self.width)/100*window.width, (self.ypos+self.height/2)/100*window.height,
+                  (self.xpos)/100*window.width, (self.ypos+self.height/2)/100*window.height]
                            
-        lines.extend([(self.xpos+self.width)/(100*window.width), (self.ypos+self.height/2)/100*window.height,
-                           (self.xpos)/(100*window.width), (self.ypos+self.height/2)/100*window.height])
+        pyglet.gl.glColor3f(1.0, 0.3, 0.5)
+        
+        pyglet.graphics.draw(4, pyglet.gl.GL_LINES,
+            ('v2f', center))
+        
+        pyglet.gl.glColor3f(1.0, 1.0, 1.0)
         
         for y in range(1, round(numLines/2)):
             interval = (100/(100/self.zoomLevel))*y
@@ -181,7 +191,7 @@ class UINavElement(UIComponent):
                           ((self.xpos)/100*window.width),  (self.ypos+self.height/2)/100*window.height-(interval/100*(self.height/100*window.height))])
     
         # Draw a grid, making sure that the specified zoom level of squares are displayed
-        pyglet.graphics.draw((round(numLines/2)-1)*8+4, pyglet.gl.GL_LINES,
+        pyglet.graphics.draw((round(numLines/2)-1)*8, pyglet.gl.GL_LINES,
             ('v2f', lines))
                 
 class UIButton(UIComponent):
