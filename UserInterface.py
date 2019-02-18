@@ -107,7 +107,7 @@ class UIComponent(object):
         if hasattr(self, 'sendDrag'): self.sendDrag(x, y, dx, dy)
         
     def resizeWindow(self, width, height):
-        if self.sendResize is not None: self.sendResize(width, height)
+        if hasattr(self, 'sendResize'): self.sendResize(width, height)
         
     def getName(self):
         return self.name
@@ -136,8 +136,38 @@ class UIComponent(object):
          ('v2f', [(self.xpos)/100*window.width, (self.ypos)/100*window.height,
                   (self.width+self.xpos)/100*window.width, (self.ypos)/100*window.height,
                   (self.width+self.xpos)/100*window.width, (self.height+self.ypos)/100*window.height,
-                  (self.xpos)/100*window.width, (self.height+self.ypos)/100*window.height]))
-                 
+                  (self.xpos)/100*window.width, (self.height+self.ypos)/100*window.height])) 
+            
+class UINavElement(UIComponent):
+    def __init__(self, name, x, y, w, h):
+        UIComponent.__init__(self, name, x, y, w, h)
+        
+        # Default zoom level is level 1, 4 lightyears per screen unit
+        self.zoomLevel = 5
+        
+        # The nav element draws a grid with the ship in the middle. On click, it slowly rotates the ship towards the desired heading
+        
+    def setZoomLevel(self, level):
+        self.zoomLevel = level
+        
+    def render(self, window):
+        numLines = round(100/self.zoomLevel)
+        if numLines % 2 == 1:
+            numLines = numLines - 1
+    
+        lines = []
+        for y in range(1, numLines):
+            interval = (100/numLines)*y
+            lines.extend([(self.xpos/100*window.width)+(interval/100*(self.width/100*window.width)), (self.ypos+self.height)/100*window.height,
+                          (self.xpos/100*window.width)+(interval/100*(self.width/100*window.width)), (self.ypos)/100*window.height])
+                          
+            lines.extend([(self.xpos/100*window.width), (self.ypos)/100*window.height + (interval/100*(self.height/100*window.height)),
+                          ((self.xpos+self.width)/100*window.width), (self.ypos)/100*window.height + (interval/100*(self.height/100*window.height))])
+    
+        # Draw a grid, making sure that the specified zoom level of squares are displayed
+        pyglet.graphics.draw((numLines-1)*4, pyglet.gl.GL_LINES,
+            ('v2f', lines))
+                
 class UIButton(UIComponent):
     # Buttons are always a fixed size so we don't worry about setting their size
     def __init__(self, name, text, x, y):

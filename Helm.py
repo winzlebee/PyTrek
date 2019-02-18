@@ -35,14 +35,27 @@ pt_ui_mapBtn.setClickHandler(onclick_mapBtn)
 # Sliders
 pt_ui_warpSlider = UserInterface.UISlider("warpSlider", 0, 0, 5, 0, 4, True)
 pt_ui_impulseSlider = UserInterface.UISlider("impulseSlider", 8, 0, 3, 0, 10, True)
+pt_ui_zoomSlider = UserInterface.UISlider("zoomSlider", 92, 0, 4, 5, 50, False)
+
 pt_ui_warpSlider.setValueChangeHandler(onslidechange_warpSlider)
 pt_ui_impulseSlider.setValueChangeHandler(onslidechange_impulseSlider)
+
+
+# Navigation Element
+pt_ui_navElement = UserInterface.UINavElement("navigation", 25, 25, 50, 50)
+    
+def onslidechange_zoomSlider(val):
+    pt_ui_navElement.setZoomLevel(val)
+    
+pt_ui_zoomSlider.setValueChangeHandler(onslidechange_zoomSlider)
 
 helm_ui.addComponent(pt_ui_mapBtn)
 helm_ui.addComponent(pt_ui_visBtn)
 helm_ui.addComponent(pt_ui_engBtn)  
 helm_ui.addComponent(pt_ui_warpSlider)
 helm_ui.addComponent(pt_ui_impulseSlider)
+helm_ui.addComponent(pt_ui_zoomSlider)
+helm_ui.addComponent(pt_ui_navElement)
 
 # Pyglet code, send messages to server somewhere in here
 
