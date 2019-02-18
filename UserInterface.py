@@ -6,6 +6,12 @@ from functools import wraps
 ui_btn = pyglet.resource.image('resources/ui_btn.png')
 ui_btn_hover = pyglet.resource.image('resources/ui_btn_hover.png')
 
+# Slider
+ui_slider_top = pyglet.resource.image('resources/slider_top.png')
+ui_slider_bottom = pyglet.resource.image('resources/slider_bottom.png')
+ui_slider_button = pyglet.resource.image('resources/slider_button.png')
+ui_slider_segment = pyglet.resource.image('resources/slider_segment.png')
+
 # Simple user interface class. All objects are defined relative to 0-100 coordinates on the width
 # and height of the screen.
 class PyTrekUserInterface(object):
@@ -45,6 +51,14 @@ class PyTrekUserInterface(object):
                         continue
                 
                 component.hover(False)
+                
+        @self.window.event
+        def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
+            # Pass the mouse drag event to a slider if it exists
+            if buttons == mouse.LEFT:
+                component = getNormalizedComponent(x, y)
+                if component is not None:
+                    component.drag(x, y, dx, dy)
               
         # Whenever the window is resized, this should propogate through all child functions  
         @self.window.event
@@ -86,7 +100,10 @@ class UIComponent(object):
         if hasattr(self, 'sendClick'): self.sendClick()
         
     def hover(self, hoverStatus):
-        if self.sendHover is not None: self.sendHover(hoverStatus)
+        if hasattr(self, 'sendHover'): self.sendHover(hoverStatus)
+        
+    def drag(self, x, y, dx, dy):
+        if hasattr(self, 'sendDrag'): self.sendDrag(x, y, dx, dy)
         
     def resizeWindow(self, width, height):
         if self.sendResize is not None: self.sendResize(width, height)
@@ -99,6 +116,9 @@ class UIComponent(object):
         
     def setResizeHandler(self, resizeFunc):
         self.sendResize = resizeFunc
+        
+    def setDragHandler(self, dragFunc):
+        self.sendDrag = dragFunc
         
     def setHoverHandler(self, hoverFunc):
         def newHandler(h):
@@ -129,8 +149,8 @@ class UIButton(UIComponent):
         # Set the resize handler for the buttons in the User Interface
         def on_resize(width, height):
             # New window size width, height
-            self.sprite.update(x=(self.xpos/100)*width, y=(self.ypos/100)*height, scale=(self.width/100*width)/self.sprite.width)
-            self.sprite_hover.update(x=(self.xpos/100)*width, y=(self.ypos/100)*height, scale=(self.width/100*width)/self.sprite_hover.width)
+            self.sprite.update(x=(self.xpos/100)*width, y=(self.ypos/100)*height, scale=(self.width/100*width)/self.sprite.image.width)
+            self.sprite_hover.update(x=(self.xpos/100)*width, y=(self.ypos/100)*height, scale=(self.width/100*width)/self.sprite_hover.image.width)
             
             # Placing of the text element
             self.textElement.font_size = (self.height/100)*height/4
@@ -158,4 +178,62 @@ class UIButton(UIComponent):
             self.sprite.draw()
             
         self.textElement.draw()
+        
+class UISlider(UIComponent):
+    
+    def __init__(self, name, x, y, steps, minVal, maxVal):
+        UIComponent.__init__(self, name, x, y, 4, 4*steps+16)
+        self.numSteps = steps;
+        self.min = minVal
+        self.max = maxVal
+        self.currentVal = 0;
+        
+        self.slideBatch = pyglet.graphics.Batch()
+        
+        # Definition for sprites we're gonna use
+        self.spriteBottom = pyglet.sprite.Sprite(img=ui_slider_bottom, batch=self.slideBatch)
+        self.spriteTop = pyglet.sprite.Sprite(img=ui_slider_top, batch=self.slideBatch)
+        
+        self.segmentSprites = []
+        for i in range(self.numSteps):
+            self.segmentSprites.append(pyglet.sprite.Sprite(img=ui_slider_segment, batch=self.slideBatch))
+            
+        self.spriteSlider = pyglet.sprite.Sprite(img=ui_slider_button, batch=self.slideBatch)
+        
+        def on_resize(width, height):
+            scaleFac = (self.width/100*width)/ui_slider_segment.width
+        
+            # Scale the segments first
+            counter = 0
+            for segment in self.segmentSprites:
+                segment.scale = scaleFac
+                segment.update(x=self.xpos/100*width, y=self.ypos/100*width+(segment.height*counter)+(segment.height/2))
+                counter = counter + 1
+        
+            # New window size width, height
+            self.spriteSlider.scale = scaleFac
+            self.updateSliderPosition()
+            self.spriteBottom.update(x=(self.xpos/100)*width, y=(self.ypos/100)*height, scale=scaleFac)
+            self.spriteTop.update(x=(self.xpos/100)*width, y=self.ypos/100*height+(self.segmentSprites[0].height*(self.numSteps+0.5)), scale=scaleFac)
+            
+        # Called when a drag occurs on the slider
+        def on_drag(x, y, dx, dy):
+            # Get and set the drag value
+            if y > self.spriteSlider.y and y < self.spriteSlider.y+self.spriteSlider.height:
+                change = dy/(self.segmentSprites[-1].y - self.segmentSprites[0].y)*self.max
+                # We started on the slider
+                if self.currentVal + change > self.min and self.currentVal + change < self.max:
+                    self.currentVal += change
+                    self.updateSliderPosition()
+                
+        self.setDragHandler(on_drag)
+        self.setResizeHandler(on_resize)
+        
+    # Updates the position of the slider when the value changes
+    def updateSliderPosition(self):
+        self.spriteSlider.update(x=self.segmentSprites[0].x, y=self.segmentSprites[0].y+(self.currentVal/self.max)*(self.segmentSprites[-1].y-self.segmentSprites[0].y))
+        
+    def render(self, window):
+        self.slideBatch.draw()
+        
     
