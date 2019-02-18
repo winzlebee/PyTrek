@@ -2,13 +2,24 @@ Time to get Serious
 
 Here's a TODO for PyTrek
 - Add network client that's able to command the ship - DONE
+- Basic UI Library including buttons - DONE
 - Add GUI for warp and heading to helm
+    - Sliders - DONE
+    - Heading Changer - IN PROGRESS
+- Map view for main display
+- Multiplayer integration for helm
 - Add items that go on the map 
+    - Star Systems
+    - Space Stations
+    - Asteroid fields
 - Allow the network client to change the main view to the map
 - Add spaceship model
 - Add space station model
+- Weapons targeting module
 - Refueling & Weapon inventory
 - Skybox
 - Nebulas
 - Warp signature visual
+
+Long term
 - Engineering module platformer

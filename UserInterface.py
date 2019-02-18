@@ -186,7 +186,7 @@ class UISlider(UIComponent):
         self.numSteps = steps;
         self.min = minVal
         self.max = maxVal
-        self.currentVal = 0;
+        self.currentVal = self.min;
         
         self.slideBatch = pyglet.graphics.Batch()
         
@@ -220,18 +220,25 @@ class UISlider(UIComponent):
         def on_drag(x, y, dx, dy):
             # Get and set the drag value
             if y > self.spriteSlider.y and y < self.spriteSlider.y+self.spriteSlider.height:
-                change = dy/(self.segmentSprites[-1].y - self.segmentSprites[0].y)*self.max
+                change = dy/(self.segmentSprites[-1].y - self.segmentSprites[0].y)*(self.max-self.min)
                 # We started on the slider
                 if self.currentVal + change > self.min and self.currentVal + change < self.max:
                     self.currentVal += change
+                    self.slideChanged(self.currentVal)
                     self.updateSliderPosition()
                 
         self.setDragHandler(on_drag)
         self.setResizeHandler(on_resize)
         
+    def slideChanged(self, newVal):
+        if hasattr(self, 'sendValueChanged'): self.sendValueChanged(newVal)
+    
+    def setValueChangeHandler(self, newFunc):
+        self.sendValueChanged = newFunc
+        
     # Updates the position of the slider when the value changes
     def updateSliderPosition(self):
-        self.spriteSlider.update(x=self.segmentSprites[0].x, y=self.segmentSprites[0].y+(self.currentVal/self.max)*(self.segmentSprites[-1].y-self.segmentSprites[0].y))
+        self.spriteSlider.update(x=self.segmentSprites[0].x, y=self.segmentSprites[0].y+((self.currentVal-self.min)/(self.max-self.min))*(self.segmentSprites[-1].y-self.segmentSprites[0].y))
         
     def render(self, window):
         self.slideBatch.draw()
