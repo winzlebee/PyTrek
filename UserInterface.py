@@ -1,6 +1,7 @@
 import pyglet
 from pyglet.window import mouse
 from functools import wraps
+from math import isclose
 
 # Global imports for UI Components used in the entire user interface
 ui_btn = pyglet.resource.image('resources/ui_btn.png')
@@ -181,12 +182,15 @@ class UIButton(UIComponent):
         
 class UISlider(UIComponent):
     
-    def __init__(self, name, x, y, steps, minVal, maxVal):
+    # Define a slider with steps elements, a minimum value and a maxium value. Snap defines whether we should snap to the steps or not
+    def __init__(self, name, x, y, steps, minVal, maxVal, snap):
         UIComponent.__init__(self, name, x, y, 4, 4*steps+16)
         self.numSteps = steps;
         self.min = minVal
         self.max = maxVal
         self.currentVal = self.min;
+        
+        self.snapToStep = snap
         
         self.slideBatch = pyglet.graphics.Batch()
         
@@ -216,29 +220,42 @@ class UISlider(UIComponent):
             self.spriteBottom.update(x=(self.xpos/100)*width, y=(self.ypos/100)*height, scale=scaleFac)
             self.spriteTop.update(x=(self.xpos/100)*width, y=self.ypos/100*height+(self.segmentSprites[0].height*(self.numSteps+0.5)), scale=scaleFac)
             
+        self.snapLastVal = 0
         # Called when a drag occurs on the slider
         def on_drag(x, y, dx, dy):
             # Get and set the drag value
-            if y > self.spriteSlider.y and y < self.spriteSlider.y+self.spriteSlider.height:
-                change = dy/(self.segmentSprites[-1].y - self.segmentSprites[0].y)*(self.max-self.min)
-                # We started on the slider
-                if self.currentVal + change > self.min and self.currentVal + change < self.max:
-                    self.currentVal += change
+            #if y > self.spriteSlider.y and y < self.spriteSlider.y+self.spriteSlider.height:
+            change = dy/(self.segmentSprites[-1].y - self.segmentSprites[0].y)*(self.max-self.min)
+            if self.currentVal + change > self.min and self.currentVal + change < self.max:
+                self.currentVal += change
+                
+                # If we're snapping, we need to only send the value if it's changed
+                if self.snapToStep:
+                    if self.snapLastVal != round(self.currentVal):
+                        sendVal = round(self.currentVal)
+                        self.slideChanged(sendVal)
+                        self.snapLastVal = sendVal
+                else:
                     self.slideChanged(self.currentVal)
-                    self.updateSliderPosition()
+                
+                self.updateSliderPosition()
                 
         self.setDragHandler(on_drag)
         self.setResizeHandler(on_resize)
         
     def slideChanged(self, newVal):
-        if hasattr(self, 'sendValueChanged'): self.sendValueChanged(newVal)
+        if hasattr(self, 'sendValueChanged'): 
+            self.sendValueChanged(max(0, newVal))
     
     def setValueChangeHandler(self, newFunc):
         self.sendValueChanged = newFunc
         
     # Updates the position of the slider when the value changes
     def updateSliderPosition(self):
-        self.spriteSlider.update(x=self.segmentSprites[0].x, y=self.segmentSprites[0].y+((self.currentVal-self.min)/(self.max-self.min))*(self.segmentSprites[-1].y-self.segmentSprites[0].y))
+        if self.snapToStep:
+            self.spriteSlider.update(x=self.segmentSprites[0].x, y=self.segmentSprites[0].y+(round(self.currentVal-self.min)/(self.max-self.min))*(self.segmentSprites[-1].y-self.segmentSprites[0].y))
+        else:
+            self.spriteSlider.update(x=self.segmentSprites[0].x, y=self.segmentSprites[0].y+((self.currentVal-self.min)/(self.max-self.min))*(self.segmentSprites[-1].y-self.segmentSprites[0].y))
         
     def render(self, window):
         self.slideBatch.draw()

@@ -20,6 +20,9 @@ def onclick_mapBtn():
     
 def onslidechange_warpSlider(val):
     print("Warp Slider:", val)
+    
+def onslidechange_impulseSlider(val):
+    print("Impulse Slider:", val)
 
 # UI Components for the helm
 
@@ -30,9 +33,10 @@ pt_ui_engBtn = UserInterface.UIButton("mapBtn", "Engineering", 100-48, 100-8)
 pt_ui_mapBtn.setClickHandler(onclick_mapBtn)
 
 # Sliders
-pt_ui_warpSlider = UserInterface.UISlider("warpSlider", 0, 0, 4, 1, 4)
-pt_ui_impulseSlider = UserInterface.UISlider("impulseSlider", 8, 0, 2, 0, 100)
+pt_ui_warpSlider = UserInterface.UISlider("warpSlider", 0, 0, 5, 0, 4, True)
+pt_ui_impulseSlider = UserInterface.UISlider("impulseSlider", 8, 0, 3, 0, 10, True)
 pt_ui_warpSlider.setValueChangeHandler(onslidechange_warpSlider)
+pt_ui_impulseSlider.setValueChangeHandler(onslidechange_impulseSlider)
 
 helm_ui.addComponent(pt_ui_mapBtn)
 helm_ui.addComponent(pt_ui_visBtn)
