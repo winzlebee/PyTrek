@@ -11,3 +11,6 @@ def shortAngleDist(a0,a1):
 # Linearly interpolate between two angles t amount
 def angleLerp(a0,a1,t):
     return a0 + shortAngleDist(a0,a1)*t
+    
+def angleSmoothLerp(a0, a1, t):
+    return a0 + shortAngleDist(a0, a1)*(-2*(t**3) + 3*(t**2))

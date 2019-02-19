@@ -166,7 +166,7 @@ class UINavElement(UIComponent):
             if self.rotating:
                 progress = abs(self.rotTimePassed/(Util.shortAngleDist(self.oldDirection, self.newDirection)/self.rotationSpeed))
                 if not progress > 1:
-                    self.sprite.rotation = Util.angleLerp(self.oldDirection, self.newDirection, progress)
+                    self.sprite.rotation = Util.angleSmoothLerp(self.oldDirection, self.newDirection, progress)
                     self.rotTimePassed += delta
                 elif self.rotTimePassed != 0:
                     self.cancelRotation()
