@@ -1,11 +1,21 @@
 Time to get Serious
 
-Here's a TODO for PyTrek
+Art assets TODO
+- Icons for the sliders on the helm
+    - Zoom icon
+    - Impulse icon
+    - Warp Icon
+- Find a cool font to use
+- Different ship models
+- Redesign buttons and sliders (?)
+
+Programming TODO
 - Add network client that's able to command the ship - DONE
 - Basic UI Library including buttons - DONE
 - Add GUI for warp and heading to helm
     - Sliders - DONE
-    - Heading Changer - IN PROGRESS
+    - Heading Changer - DONE
+- Add labels to GUI class
 - Map view for main display
 - Multiplayer integration for helm
 - Add items that go on the map 
@@ -23,3 +33,6 @@ Here's a TODO for PyTrek
 
 Long term
 - Engineering module platformer
+
+ANNOYANCES AND BUGS
+- Clip the map view to only the dimensions of it's viewport
