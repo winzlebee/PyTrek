@@ -1,7 +1,11 @@
+import Util
+
 import pyglet
 from pyglet.window import mouse
 from functools import wraps
 from math import isclose
+
+import math
 
 # Global imports for UI Components used in the entire user interface
 ui_btn = pyglet.resource.image('resources/ui_btn.png')
@@ -37,7 +41,7 @@ class PyTrekUserInterface(object):
             if button == mouse.LEFT:
                 comp = getNormalizedComponent(x, y)
                 if comp is not None:
-                    comp.click()
+                    comp.click((x / self.window.width * 100)-comp.xpos, (y / self.window.height * 100)-comp.ypos)
                 
                             
         @self.window.event
@@ -96,9 +100,9 @@ class UIComponent(object):
         
         self.hoverStatus = False
         
-        
-    def click(self):
-        if hasattr(self, 'sendClick'): self.sendClick()
+    # Sends the click in coordinates relative to the component's origin, in UI coordinates
+    def click(self, x, y):
+        if hasattr(self, 'sendClick'): self.sendClick(x, y)
         
     def hover(self, hoverStatus):
         if hasattr(self, 'sendHover'): self.sendHover(hoverStatus)
@@ -139,16 +143,66 @@ class UIComponent(object):
                   (self.xpos)/100*window.width, (self.height+self.ypos)/100*window.height])) 
             
 class UINavElement(UIComponent):
-    def __init__(self, name, x, y, w, h):
+    def __init__(self, name, x, y, w, h, canDirect, navImage):
         UIComponent.__init__(self, name, x, y, w, h)
         
         # Default zoom level is level 1, 4 lightyears per screen unit
         self.zoomLevel = 5
+        self.control = canDirect
+        
+        # For direction angle changes
+        self.rotating = False
+        self.oldDirection = 0
+        self.newDirection = 0
+        
+        self.rotationSpeed = 90
+        self.rotTimePassed = 0
+        
+        # The navigation image to use is passed as a constructor to the UINavElement
+        self.sprite = pyglet.sprite.Sprite(img=navImage)
+        
+        # Update per frame based on the rotation speed of the ship
+        def update_ship(delta):
+            if self.rotating:
+                progress = abs(self.rotTimePassed/(Util.shortAngleDist(self.oldDirection, self.newDirection)/self.rotationSpeed))
+                if not progress > 1:
+                    self.sprite.rotation = Util.angleLerp(self.oldDirection, self.newDirection, progress)
+                    self.rotTimePassed += delta
+                elif self.rotTimePassed != 0:
+                    self.cancelRotation()
+            
+        pyglet.clock.schedule_interval(update_ship, 1/60.0)
+        
+        # Set the resize handler for the navigation marker
+        def on_resize(width, height):
+            # New window size width, height
+            self.sprite.update(x=((self.xpos+self.width/2)/100)*width, y=((self.ypos+self.height/2)/100)*height, scale=(4/100*width)/(self.sprite.image.width))
+            
+        self.setResizeHandler(on_resize)
         
         # The nav element draws a grid with the ship in the middle. On click, it slowly rotates the ship towards the desired heading
+        if self.control:
+            def clickHandler(x, y):
+                # Get the angle to the click that occurred
+                if (self.rotating):
+                    self.cancelRotation()
+                    
+                self.newDirection = -math.degrees(math.atan2(y-(self.width/2), x-(self.height/2))) + 90
+                self.rotating = True
+                
+            self.setClickHandler(clickHandler)
         
     def setZoomLevel(self, level):
         self.zoomLevel = level
+        
+    def cancelRotation(self):
+        self.rotTimePassed = 0
+        self.oldDirection = self.sprite.rotation
+        self.rotating = False
+        
+    # Set the number of degrees per second
+    def setRotationSpeed(self, rot):
+        self.rotationSpeed = rot
         
     # Zoom factor is how much we need to scale things that are on the map
     def getZoomFactor(self):
@@ -193,6 +247,8 @@ class UINavElement(UIComponent):
         # Draw a grid, making sure that the specified zoom level of squares are displayed
         pyglet.graphics.draw((round(numLines/2)-1)*8, pyglet.gl.GL_LINES,
             ('v2f', lines))
+            
+        self.sprite.draw()
                 
 class UIButton(UIComponent):
     # Buttons are always a fixed size so we don't worry about setting their size

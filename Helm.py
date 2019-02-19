@@ -16,7 +16,7 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 window = pyglet.window.Window(1280, 720, resizable=True)
 helm_ui = UserInterface.PyTrekUserInterface(window)
 
-def onclick_mapBtn():
+def onclick_mapBtn(x, y):
     print("Map button has been clicked.")
     
 def onslidechange_warpSlider(val):
@@ -28,7 +28,10 @@ def onslidechange_impulseSlider(val):
 # UI Components for the helm
 
 # Navigation Element
-pt_ui_navElement = UserInterface.UINavElement("navigation", 15, 15, 70, 70)
+shipImg = pyglet.resource.image("resources/ship_fighter.png")
+shipImg.anchor_x = shipImg.width/2
+shipImg.anchor_y = shipImg.height/2
+pt_ui_navElement = UserInterface.UINavElement("navigation", 15, 15, 70, 70, True, shipImg)
 
 # Buttons
 pt_ui_mapBtn = UserInterface.UIButton("mapBtn", "Map", 100-16, 100-8)
