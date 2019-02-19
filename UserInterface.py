@@ -170,8 +170,9 @@ class UINavElement(UIComponent):
                     self.rotTimePassed += delta
                 elif self.rotTimePassed != 0:
                     self.cancelRotation()
-            
-        pyglet.clock.schedule_interval(update_ship, 1/60.0)
+        
+        if self.control:    
+            pyglet.clock.schedule_interval(update_ship, 1/60.0)
         
         # Set the resize handler for the navigation marker
         def on_resize(width, height):
