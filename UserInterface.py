@@ -258,7 +258,7 @@ class UIButton(UIComponent):
         self.text = text
         self.sprite = pyglet.sprite.Sprite(img=ui_btn)
         self.sprite_hover = pyglet.sprite.Sprite(img=ui_btn_hover)
-        self.textElement = pyglet.text.Label(text=self.text, font_name='Arial', anchor_x="center", anchor_y="center")
+        self.textElement = pyglet.text.Label(text=self.text, font_name='Consolas', anchor_x="center", anchor_y="center")
         
         # Set the resize handler for the buttons in the User Interface
         def on_resize(width, height):
@@ -296,7 +296,7 @@ class UIButton(UIComponent):
 class UISlider(UIComponent):
     
     # Define a slider with steps elements, a minimum value and a maxium value. Snap defines whether we should snap to the steps or not
-    def __init__(self, name, x, y, steps, minVal, maxVal, snap):
+    def __init__(self, name, x, y, steps, minVal, maxVal, snap, topImg=ui_slider_top):
         UIComponent.__init__(self, name, x, y, 4, 4*steps+16)
         self.numSteps = steps;
         self.min = minVal
@@ -309,7 +309,7 @@ class UISlider(UIComponent):
         
         # Definition for sprites we're gonna use
         self.spriteBottom = pyglet.sprite.Sprite(img=ui_slider_bottom, batch=self.slideBatch)
-        self.spriteTop = pyglet.sprite.Sprite(img=ui_slider_top, batch=self.slideBatch)
+        self.spriteTop = pyglet.sprite.Sprite(img=topImg, batch=self.slideBatch)
         
         self.segmentSprites = []
         for i in range(self.numSteps):
@@ -331,7 +331,7 @@ class UISlider(UIComponent):
             self.spriteSlider.scale = scaleFac
             self.updateSliderPosition()
             self.spriteBottom.update(x=(self.xpos/100)*width, y=(self.ypos/100)*height, scale=scaleFac)
-            self.spriteTop.update(x=(self.xpos/100)*width, y=self.ypos/100*height+(self.segmentSprites[0].height*(self.numSteps+0.5)), scale=scaleFac/3)
+            self.spriteTop.update(x=(self.xpos/100)*width, y=self.ypos/100*height+(self.segmentSprites[0].height*(self.numSteps+0.5)), scale=(self.width/100*width)/topImg.width)
             
         self.snapLastVal = 0
         # Called when a drag occurs on the slider

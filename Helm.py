@@ -40,7 +40,9 @@ pt_ui_engBtn = UserInterface.UIButton("mapBtn", "Engineering", 100-48, 100-8)
 pt_ui_mapBtn.setClickHandler(onclick_mapBtn)
 
 # Sliders
-pt_ui_warpSlider = UserInterface.UISlider("warpSlider", 0, 0, 5, 0, 4, True)
+pt_ui_warpImg = pyglet.resource.image("resources/slider_warp.png")
+pt_ui_warpSlider = UserInterface.UISlider("warpSlider", 0, 0, 5, 0, 4, True, pt_ui_warpImg)
+
 pt_ui_impulseSlider = UserInterface.UISlider("impulseSlider", 8, 0, 3, 0, 10, True)
 pt_ui_zoomSlider = UserInterface.UISlider("zoomSlider", 92, 0, 3, 5, 40, False)
 
@@ -65,7 +67,7 @@ helm_ui.addComponent(pt_ui_navElement)
 @window.event
 def on_draw():
     pyglet.gl.glClear(pyglet.gl.GL_COLOR_BUFFER_BIT)
-    pyglet.gl.glClearColor(0.0, 0.1, 0.4, 1.0)
+    pyglet.gl.glClearColor(0.0, 0.1, 0.3, 1.0)
     helm_ui.render()
     
 pyglet.app.run()
