@@ -227,26 +227,31 @@ class UINavElement(UIComponent):
         
         pyglet.gl.glColor3f(1.0, 1.0, 1.0)
         
+        renderedVertices = 0
         for y in range(1, round(numLines/2)):
             interval = (100/(100/self.zoomLevel))*y
             
             # Draw a line in the middle, then draw one either side
-            
-                           
-            lines.extend([((self.xpos+self.width/2)/100*window.width)+(interval/100*(self.width/100*window.width)), (self.ypos+self.height)/100*window.height,
-                          ((self.xpos+self.width/2)/100*window.width)+(interval/100*(self.width/100*window.width)), (self.ypos)/100*window.height])
-                          
-            lines.extend([((self.xpos+self.width/2)/100*window.width)-(interval/100*(self.width/100*window.width)), (self.ypos+self.height)/100*window.height,
-                          ((self.xpos+self.width/2)/100*window.width)-(interval/100*(self.width/100*window.width)), (self.ypos)/100*window.height])
-                          
-            lines.extend([((self.xpos+self.width)/100*window.width), (self.ypos+self.height/2)/100*window.height+(interval/100*(self.height/100*window.height)),
-                          ((self.xpos)/100*window.width),  (self.ypos+self.height/2)/100*window.height+(interval/100*(self.height/100*window.height))])
-                          
-            lines.extend([((self.xpos+self.width)/100*window.width), (self.ypos+self.height/2)/100*window.height-(interval/100*(self.height/100*window.height)),
-                          ((self.xpos)/100*window.width),  (self.ypos+self.height/2)/100*window.height-(interval/100*(self.height/100*window.height))])
+            if (interval*2 < 100):
+                lines.extend([((self.xpos+self.width/2)/100*window.width)+(interval/100*(self.width/100*window.width)), (self.ypos+self.height)/100*window.height,
+    						  ((self.xpos+self.width/2)/100*window.width)+(interval/100*(self.width/100*window.width)), (self.ypos)/100*window.height])
+							  
+                lines.extend([((self.xpos+self.width/2)/100*window.width)-(interval/100*(self.width/100*window.width)), (self.ypos+self.height)/100*window.height,
+                              ((self.xpos+self.width/2)/100*window.width)-(interval/100*(self.width/100*window.width)), (self.ypos)/100*window.height])
+                              
+                renderedVertices += 1
+							  
+            if (interval*2 < 100):
+                lines.extend([((self.xpos+self.width)/100*window.width), (self.ypos+self.height/2)/100*window.height+(interval/100*(self.height/100*window.height)),
+                              ((self.xpos)/100*window.width),  (self.ypos+self.height/2)/100*window.height+(interval/100*(self.height/100*window.height))])
+                              
+                lines.extend([((self.xpos+self.width)/100*window.width), (self.ypos+self.height/2)/100*window.height-(interval/100*(self.height/100*window.height)),
+                              ((self.xpos)/100*window.width),  (self.ypos+self.height/2)/100*window.height-(interval/100*(self.height/100*window.height))])
+                              
+                renderedVertices += 1
     
         # Draw a grid, making sure that the specified zoom level of squares are displayed
-        pyglet.graphics.draw((round(numLines/2)-1)*8, pyglet.gl.GL_LINES,
+        pyglet.graphics.draw((renderedVertices)*4, pyglet.gl.GL_LINES,
             ('v2f', lines))
             
         self.sprite.draw()
