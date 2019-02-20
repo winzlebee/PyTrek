@@ -65,6 +65,7 @@ helm_ui.addComponent(pt_ui_navElement)
 @window.event
 def on_draw():
     pyglet.gl.glClear(pyglet.gl.GL_COLOR_BUFFER_BIT)
+    pyglet.gl.glClearColor(0.0, 0.1, 0.4, 1.0)
     helm_ui.render()
     
 pyglet.app.run()

@@ -331,7 +331,7 @@ class UISlider(UIComponent):
             self.spriteSlider.scale = scaleFac
             self.updateSliderPosition()
             self.spriteBottom.update(x=(self.xpos/100)*width, y=(self.ypos/100)*height, scale=scaleFac)
-            self.spriteTop.update(x=(self.xpos/100)*width, y=self.ypos/100*height+(self.segmentSprites[0].height*(self.numSteps+0.5)), scale=scaleFac)
+            self.spriteTop.update(x=(self.xpos/100)*width, y=self.ypos/100*height+(self.segmentSprites[0].height*(self.numSteps+0.5)), scale=scaleFac/3)
             
         self.snapLastVal = 0
         # Called when a drag occurs on the slider
