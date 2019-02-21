@@ -15,8 +15,8 @@ ui_btn_hover = pyglet.resource.image('resources/ui_btn_hover.png')
 # Slider
 ui_slider_top = pyglet.resource.image('resources/slider_top.png')
 ui_slider_bottom = pyglet.resource.image('resources/slider_bottom.png')
-ui_slider_button = pyglet.resource.image('resources/slider_button.png')
-ui_slider_segment = pyglet.resource.image('resources/slider_segment.png')
+ui_slider_button = pyglet.resource.image('resources/helm_UI/slider_button.png')
+ui_slider_segment = pyglet.resource.image('resources/helm_UI/slider_single.png')
 
 # Simple user interface class. All objects are defined relative to 0-100 coordinates on the width
 # and height of the screen.
@@ -372,19 +372,18 @@ class UISlider(UIComponent):
         self.spriteSlider = pyglet.sprite.Sprite(img=ui_slider_button, batch=self.slideBatch)
         
         def on_resize(xt, yt):
-            scaleFac = xt(self.width)/ui_slider_segment.width
         
             # Scale the segments first
             counter = 0
             for segment in self.segmentSprites:
-                segment.scale = scaleFac
+                segment.scale = xt(self.width)/ui_slider_segment.width
                 segment.update(x=xt(self.xpos), y=yt(self.ypos)+(segment.height*counter)+(segment.height/2)) # Add a half because of the bottom slider image
                 counter = counter + 1
         
             # New window size width, height
-            self.spriteSlider.scale = scaleFac
+            self.spriteSlider.scale = xt(self.width)/ui_slider_button.width
             self.updateSliderPosition()
-            self.spriteBottom.update(x=xt(self.xpos), y=yt(self.ypos), scale=scaleFac)
+            self.spriteBottom.update(x=xt(self.xpos), y=yt(self.ypos), scale=xt(self.width)/ui_slider_bottom.width)
             self.spriteTop.update(x=xt(self.xpos), y=yt(self.ypos)+(self.segmentSprites[0].height*(self.numSteps+0.5)), scale=xt(self.width)/topImg.width)
             
         self.snapLastVal = 0
