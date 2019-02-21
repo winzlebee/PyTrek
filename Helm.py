@@ -31,7 +31,10 @@ def onslidechange_impulseSlider(val):
 shipImg = pyglet.resource.image("resources/ship_fighter.png")
 shipImg.anchor_x = shipImg.width/2
 shipImg.anchor_y = shipImg.height/2
-pt_ui_navElement = UserInterface.UINavElement("navigation", 15, 15, 70, 70, True, shipImg)
+
+pt_ui_initialZoom = 5
+
+pt_ui_navElement = UserInterface.UINavElement("navigation", 15, 15, 70, 70, True, shipImg, pt_ui_initialZoom)
 
 # Buttons
 pt_ui_mapBtn = UserInterface.UIButton("mapBtn", "Map", 100-16, 100-8)
@@ -45,7 +48,7 @@ pt_ui_warpSlider = UserInterface.UISlider("warpSlider", 0, 0, 5, 0, 4, True)
 
 pt_ui_impulseImg = pyglet.resource.image("resources/slider_impulse.png")
 pt_ui_impulseSlider = UserInterface.UISlider("impulseSlider", 8, 0, 3, 0, 10, True, pt_ui_impulseImg)
-pt_ui_zoomSlider = UserInterface.UISlider("zoomSlider", 92, 0, 3, 5, 40, False)
+pt_ui_zoomSlider = UserInterface.UISlider("zoomSlider", 92, 0, 3, pt_ui_initialZoom, 50, False)
 
 pt_ui_warpSlider.setValueChangeHandler(onslidechange_warpSlider)
 pt_ui_impulseSlider.setValueChangeHandler(onslidechange_impulseSlider)

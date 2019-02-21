@@ -73,6 +73,13 @@ class PyTrekUserInterface(object):
                 component.resizeWindow(width, height)
             # return pyglet.event.EVENT_HANDLED
                 
+    # Function to convert ui coordinates to global coordinates
+    def uiToGlobal(x, y):
+        return (x/100*self.window.width, y/100*self.window.height)
+        
+    # Function to convert global coordinates to local UI coordinates
+    def globalToUi(x, y):
+        return (x / self.window.width * 100, y / self.window.height * 100)
         
     def render(self):
         # Render the whole UI
@@ -144,11 +151,12 @@ class UIComponent(object):
                   (self.xpos)/100*window.width, (self.height+self.ypos)/100*window.height])) 
             
 class UINavElement(UIComponent):
-    def __init__(self, name, x, y, w, h, canDirect, navImage):
+    def __init__(self, name, x, y, w, h, canDirect, navImage, initialZoom):
         UIComponent.__init__(self, name, x, y, w, h)
         
         # Default zoom level is level 1, 4 lightyears per screen unit
-        self.zoomLevel = 5
+        self.initialZoom = initialZoom
+        self.zoomLevel = initialZoom
         self.control = canDirect
         
         # For direction angle changes
@@ -185,8 +193,8 @@ class UINavElement(UIComponent):
 
             self.proceduralStars.clear()
             for i in range(500):
-                self.proceduralStars.append((random.random()-0.5)*(self.width/100*width)/5)
-                self.proceduralStars.append((random.random()-0.5)*(self.height/100*height)/5)
+                self.proceduralStars.append((random.random()-0.5)*(self.width/100*width)/initialZoom)
+                self.proceduralStars.append((random.random()-0.5)*(self.height/100*height)/initialZoom)
             
         self.setResizeHandler(on_resize)
         
@@ -265,6 +273,7 @@ class UINavElement(UIComponent):
             
         pyglet.gl.glTranslatef(window.width/2, window.height/2, 0)
         pyglet.gl.glScalef(self.getZoomFactor(), self.getZoomFactor(), 0.0)
+        #pyglet.gl.glScissor(self.xpos/100*window.width, self.ypos/100*window.width, 
             
         pyglet.graphics.draw(500, pyglet.gl.GL_POINTS,
             ('v2f', self.proceduralStars))
