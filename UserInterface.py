@@ -5,6 +5,7 @@ from pyglet.window import mouse
 from functools import wraps
 from math import isclose
 
+import random
 import math
 
 # Global imports for UI Components used in the entire user interface
@@ -161,6 +162,9 @@ class UINavElement(UIComponent):
         # The navigation image to use is passed as a constructor to the UINavElement
         self.sprite = pyglet.sprite.Sprite(img=navImage)
         
+        # Add some stars to the navElement for something iteresting
+        self.proceduralStars = []
+        
         # Update per frame based on the rotation speed of the ship
         def update_ship(delta):
             if self.rotating:
@@ -178,6 +182,11 @@ class UINavElement(UIComponent):
         def on_resize(width, height):
             # New window size width, height
             self.sprite.update(x=((self.xpos+self.width/2)/100)*width, y=((self.ypos+self.height/2)/100)*height, scale=(4/100*width)/(self.sprite.image.width))
+
+            self.proceduralStars.clear()
+            for i in range(500):
+                self.proceduralStars.append((random.random()-0.5)*(self.width/100*width)/5)
+                self.proceduralStars.append((random.random()-0.5)*(self.height/100*height)/5)
             
         self.setResizeHandler(on_resize)
         
@@ -207,7 +216,7 @@ class UINavElement(UIComponent):
         
     # Zoom factor is how much we need to scale things that are on the map
     def getZoomFactor(self):
-        return 100/self.zoomLevel
+        return self.zoomLevel
         
     def render(self, window):
         numLines = round(100/self.zoomLevel+2)
@@ -253,6 +262,14 @@ class UINavElement(UIComponent):
         # Draw a grid, making sure that the specified zoom level of squares are displayed
         pyglet.graphics.draw((renderedVertices)*4, pyglet.gl.GL_LINES,
             ('v2f', lines))
+            
+        pyglet.gl.glTranslatef(window.width/2, window.height/2, 0)
+        pyglet.gl.glScalef(self.getZoomFactor(), self.getZoomFactor(), 0.0)
+            
+        pyglet.graphics.draw(500, pyglet.gl.GL_POINTS,
+            ('v2f', self.proceduralStars))
+            
+        pyglet.gl.glLoadIdentity()
             
         self.sprite.draw()
                 
