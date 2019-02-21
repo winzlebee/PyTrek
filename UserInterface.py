@@ -90,7 +90,7 @@ class PyTrekUserInterface(object):
         # Render the whole UI
         for component in self.components:
             # Send a function to determine the local to global coordinate system for these elements
-            component.render(self.uiToGlobalWidth, self.uiToGlobalHeight)
+              component.render(self.uiToGlobalWidth, self.uiToGlobalHeight)
             
     def getComponent(self, name):
         for component in self.components:
@@ -98,6 +98,9 @@ class PyTrekUserInterface(object):
                 return component
                 
         return None
+        
+    def addNavElement(self, navElement):
+        self.components.insert(0, navElement)
         
     def addComponent(self, component):
         self.components.append(component)
@@ -157,7 +160,21 @@ class UIComponent(object):
         
         pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
          ('v2f', square)) 
-            
+
+class UIImageElement(UIComponent):
+  def __init__(self, name, x, y, w, h, image):
+    UIComponent.__init__(self, name, x, y, w, h)
+    
+    self.sprite = pyglet.sprite.Sprite(img=image)
+    
+    def on_resize(xt, yt):
+      self.sprite.update(x=xt(self.xpos), y=yt(self.ypos), scale=xt(self.width)/self.sprite.image.width)
+      
+    self.setResizeHandler(on_resize)
+    
+  def render(self, xt, yt):
+    self.sprite.draw()            
+
 class UINavElement(UIComponent):
     def __init__(self, name, x, y, w, h, canDirect, navImage, initialZoom):
         UIComponent.__init__(self, name, x, y, w, h)
@@ -267,7 +284,7 @@ class UINavElement(UIComponent):
                           
             lines.extend([xt(self.xpos+self.width), yt(self.ypos+self.height/2)-(interval/100*yt(self.height)),
                           xt(self.xpos), yt(self.ypos+self.height/2)-(interval/100*yt(self.height))])
-    
+        
         pyglet.gl.glScissor(round(xt(self.xpos)), round(yt(self.ypos)), round(xt(self.xpos + self.width/1.25)), round(yt(self.ypos+self.height/1.25)))
         # Draw a grid, making sure that the specified zoom level of squares are displayed
 

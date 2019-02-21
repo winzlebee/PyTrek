@@ -45,6 +45,9 @@ pt_ui_mapBtn.setClickHandler(onclick_mapBtn)
 # Sliders
 
 pt_ui_impulseImg = pyglet.resource.image("resources/slider_impulse.png")
+pt_ui_sliderGroupImage = pyglet.resource.image("resources/helm_UI/background.png")
+
+pt_ui_sliderGroup = UserInterface.UIImageElement("sliderGroup", 0, 0, 20, 75, pt_ui_sliderGroupImage)
 
 pt_ui_warpSlider = UserInterface.UISlider("warpSlider", 0, 0, 5, 0, 4, True)
 pt_ui_impulseSlider = UserInterface.UISlider("impulseSlider", 8, 0, 3, 0, 10, True, pt_ui_impulseImg)
@@ -58,13 +61,19 @@ def onslidechange_zoomSlider(val):
     
 pt_ui_zoomSlider.setValueChangeHandler(onslidechange_zoomSlider)
 
+# Buttons
 helm_ui.addComponent(pt_ui_mapBtn)
 helm_ui.addComponent(pt_ui_visBtn)
-helm_ui.addComponent(pt_ui_engBtn)  
+helm_ui.addComponent(pt_ui_engBtn)
+
+# Sliders
+helm_ui.addComponent(pt_ui_sliderGroup)
 helm_ui.addComponent(pt_ui_warpSlider)
 helm_ui.addComponent(pt_ui_impulseSlider)
 helm_ui.addComponent(pt_ui_zoomSlider)
-helm_ui.addComponent(pt_ui_navElement)
+
+# Navigation Element
+helm_ui.addNavElement(pt_ui_navElement)
 
 # Pyglet code, send messages to server somewhere in here
 
