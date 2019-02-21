@@ -25,6 +25,8 @@ class PyTrekUserInterface(object):
         
         self.components = []
         self.window = windowRef
+        self.xDivisions = 100;
+        self.yDivisions = 100;
         
         def getNormalizedComponent(x, y):
             for component in self.components:
@@ -70,14 +72,25 @@ class PyTrekUserInterface(object):
         @self.window.event
         def on_resize(width, height):
             for component in self.components:
-                component.resizeWindow(width, height)
+                component.resizeWindow(self.uiToGlobalWidth, self.uiToGlobalHeight)
             # return pyglet.event.EVENT_HANDLED
                 
+    # Function to convert ui coordinates to global coordinates
+    def uiToGlobalWidth(self, x):
+        return x/self.xDivisions*self.window.width
+        
+    def uiToGlobalHeight(self, y):
+        return y/self.yDivisions*self.window.height
+        
+    # Function to convert global coordinates to local UI coordinates
+    def globalToUi(self, x, y):
+        return (x / self.window.width * self.xDivisions, y / self.window.height * self.yDivisions)
         
     def render(self):
         # Render the whole UI
         for component in self.components:
-            component.render(self.window)
+            # Send a function to determine the local to global coordinate system for these elements
+            component.render(self.uiToGlobalWidth, self.uiToGlobalHeight)
             
     def getComponent(self, name):
         for component in self.components:
@@ -135,20 +148,23 @@ class UIComponent(object):
             
         self.sendHover = newHandler
         
-    def render(self, window):
+    def render(self, xt, yt):
         # Render as a square for the base UIComponent class
+        square = [xt(self.xpos), yt(self.ypos),
+                  xt(self.width+self.xpos), yt(self.ypos),
+                  xt(self.width+self.xpos), yt(self.height+self.ypos),
+                  xt(self.xpos), yt(self.height+self.ypos)]
+        
         pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
-         ('v2f', [(self.xpos)/100*window.width, (self.ypos)/100*window.height,
-                  (self.width+self.xpos)/100*window.width, (self.ypos)/100*window.height,
-                  (self.width+self.xpos)/100*window.width, (self.height+self.ypos)/100*window.height,
-                  (self.xpos)/100*window.width, (self.height+self.ypos)/100*window.height])) 
+         ('v2f', square)) 
             
 class UINavElement(UIComponent):
-    def __init__(self, name, x, y, w, h, canDirect, navImage):
+    def __init__(self, name, x, y, w, h, canDirect, navImage, initialZoom):
         UIComponent.__init__(self, name, x, y, w, h)
         
         # Default zoom level is level 1, 4 lightyears per screen unit
-        self.zoomLevel = 5
+        self.initialZoom = initialZoom
+        self.zoomLevel = initialZoom
         self.control = canDirect
         
         # For direction angle changes
@@ -179,14 +195,14 @@ class UINavElement(UIComponent):
             pyglet.clock.schedule_interval(update_ship, 1/60.0)
         
         # Set the resize handler for the navigation marker
-        def on_resize(width, height):
+        def on_resize(xt, yt):
             # New window size width, height
-            self.sprite.update(x=((self.xpos+self.width/2)/100)*width, y=((self.ypos+self.height/2)/100)*height, scale=(4/100*width)/(self.sprite.image.width))
+            self.sprite.update(x=xt(self.xpos+self.width/2), y=yt(self.ypos+self.height/2), scale=xt(4)/(self.sprite.image.width))
 
             self.proceduralStars.clear()
             for i in range(500):
-                self.proceduralStars.append((random.random()-0.5)*(self.width/100*width)/5)
-                self.proceduralStars.append((random.random()-0.5)*(self.height/100*height)/5)
+                self.proceduralStars.append((random.random()-0.5)*xt(self.width)/initialZoom)
+                self.proceduralStars.append((random.random()-0.5)*yt(self.height)/initialZoom)
             
         self.setResizeHandler(on_resize)
         
@@ -218,16 +234,16 @@ class UINavElement(UIComponent):
     def getZoomFactor(self):
         return self.zoomLevel
         
-    def render(self, window):
+    def render(self, xt, yt):
         numLines = round(100/self.zoomLevel+2)
     
         lines = []
         
         # Center lines
-        center = [(self.xpos+self.width/2)/100*window.width, (self.ypos+self.height)/100*window.height,
-                  (self.xpos + self.width/2)/100*window.width, (self.ypos)/100*window.height,
-                  (self.xpos+self.width)/100*window.width, (self.ypos+self.height/2)/100*window.height,
-                  (self.xpos)/100*window.width, (self.ypos+self.height/2)/100*window.height]
+        center = [xt(self.xpos+self.width/2), yt(self.ypos+self.height),
+                  xt(self.xpos + self.width/2), yt(self.ypos),
+                  xt(self.xpos+self.width), yt(self.ypos+self.height/2),
+                  xt(self.xpos), yt(self.ypos+self.height/2)]
                            
         pyglet.gl.glColor3f(1.0, 0.3, 0.5)
         
@@ -235,39 +251,38 @@ class UINavElement(UIComponent):
             ('v2f', center))
         
         pyglet.gl.glColor3f(1.0, 1.0, 1.0)
-        
-        renderedVertices = 0
+
         for y in range(1, round(numLines/2)):
             interval = (100/(100/self.zoomLevel))*y
             
             # Draw a line in the middle, then draw one either side
-            if (interval*2 < 100):
-                lines.extend([((self.xpos+self.width/2)/100*window.width)+(interval/100*(self.width/100*window.width)), (self.ypos+self.height)/100*window.height,
-    						  ((self.xpos+self.width/2)/100*window.width)+(interval/100*(self.width/100*window.width)), (self.ypos)/100*window.height])
-							  
-                lines.extend([((self.xpos+self.width/2)/100*window.width)-(interval/100*(self.width/100*window.width)), (self.ypos+self.height)/100*window.height,
-                              ((self.xpos+self.width/2)/100*window.width)-(interval/100*(self.width/100*window.width)), (self.ypos)/100*window.height])
-                              
-                renderedVertices += 1
-							  
-            if (interval*2 < 100):
-                lines.extend([((self.xpos+self.width)/100*window.width), (self.ypos+self.height/2)/100*window.height+(interval/100*(self.height/100*window.height)),
-                              ((self.xpos)/100*window.width),  (self.ypos+self.height/2)/100*window.height+(interval/100*(self.height/100*window.height))])
-                              
-                lines.extend([((self.xpos+self.width)/100*window.width), (self.ypos+self.height/2)/100*window.height-(interval/100*(self.height/100*window.height)),
-                              ((self.xpos)/100*window.width),  (self.ypos+self.height/2)/100*window.height-(interval/100*(self.height/100*window.height))])
-                              
-                renderedVertices += 1
+            lines.extend([xt(self.xpos+self.width/2)+(interval/100*xt(self.width)), yt(self.ypos+self.height),
+						  xt(self.xpos+self.width/2)+(interval/100*xt(self.width)), yt(self.ypos)])
+						  
+            lines.extend([xt(self.xpos+self.width/2)-(interval/100*xt(self.width)), yt(self.ypos+self.height),
+                          xt(self.xpos+self.width/2)-(interval/100*xt(self.width)), yt(self.ypos)])
+						  
+            lines.extend([xt(self.xpos+self.width), yt(self.ypos+self.height/2)+(interval/100*yt(self.height)),
+                          xt(self.xpos), yt(self.ypos+self.height/2)+(interval/100*yt(self.height))])
+                          
+            lines.extend([xt(self.xpos+self.width), yt(self.ypos+self.height/2)-(interval/100*yt(self.height)),
+                          xt(self.xpos), yt(self.ypos+self.height/2)-(interval/100*yt(self.height))])
     
+        pyglet.gl.glScissor(round(xt(self.xpos)), round(yt(self.ypos)), round(xt(self.xpos + self.width/1.25)), round(yt(self.ypos+self.height/1.25)))
         # Draw a grid, making sure that the specified zoom level of squares are displayed
-        pyglet.graphics.draw((renderedVertices)*4, pyglet.gl.GL_LINES,
+
+        pyglet.gl.glEnable(pyglet.gl.GL_SCISSOR_TEST)
+        
+        pyglet.graphics.draw((round(numLines/2)-1)*8, pyglet.gl.GL_LINES,
             ('v2f', lines))
             
-        pyglet.gl.glTranslatef(window.width/2, window.height/2, 0)
+        pyglet.gl.glTranslatef(xt(self.xpos+self.width/2), yt(self.ypos+self.height/2), 0)
         pyglet.gl.glScalef(self.getZoomFactor(), self.getZoomFactor(), 0.0)
             
         pyglet.graphics.draw(500, pyglet.gl.GL_POINTS,
             ('v2f', self.proceduralStars))
+            
+        pyglet.gl.glDisable(pyglet.gl.GL_SCISSOR_TEST)
             
         pyglet.gl.glLoadIdentity()
             
@@ -283,15 +298,15 @@ class UIButton(UIComponent):
         self.textElement = pyglet.text.Label(text=self.text, font_name='Consolas', anchor_x="center", anchor_y="center")
         
         # Set the resize handler for the buttons in the User Interface
-        def on_resize(width, height):
+        def on_resize(xt, yt):
             # New window size width, height
-            self.sprite.update(x=(self.xpos/100)*width, y=(self.ypos/100)*height, scale=(self.width/100*width)/self.sprite.image.width)
-            self.sprite_hover.update(x=(self.xpos/100)*width, y=(self.ypos/100)*height, scale=(self.width/100*width)/self.sprite_hover.image.width)
+            self.sprite.update(x=xt(self.xpos), y=yt(self.ypos), scale=xt(self.width)/self.sprite.image.width)
+            self.sprite_hover.update(x=xt(self.xpos), y=yt(self.ypos), scale=xt(self.width)/self.sprite_hover.image.width)
             
             # Placing of the text element
-            self.textElement.font_size = (self.height/100)*height/4
-            self.textElement.x = (self.xpos+(self.width/2))/100*width
-            self.textElement.y = (self.ypos+(self.height/2))/100*height
+            self.textElement.font_size = xt(self.width)/20
+            self.textElement.x = xt(self.xpos+(self.width/2))
+            self.textElement.y = yt(self.ypos+(self.height/2))
             
         def on_hover(hover):
             if hover:
@@ -306,7 +321,7 @@ class UIButton(UIComponent):
     def setText(text):
         self.text = text;
         
-    def render(self, window):
+    def render(self, xt, yt):
         # TODO: Later we're gonna use OpenGL to do this
         if (self.hoverStatus):
             self.sprite_hover.draw()
@@ -339,21 +354,21 @@ class UISlider(UIComponent):
             
         self.spriteSlider = pyglet.sprite.Sprite(img=ui_slider_button, batch=self.slideBatch)
         
-        def on_resize(width, height):
-            scaleFac = (self.width/100*width)/ui_slider_segment.width
+        def on_resize(xt, yt):
+            scaleFac = xt(self.width)/ui_slider_segment.width
         
             # Scale the segments first
             counter = 0
             for segment in self.segmentSprites:
                 segment.scale = scaleFac
-                segment.update(x=self.xpos/100*width, y=self.ypos/100*width+(segment.height*counter)+(segment.height/2))
+                segment.update(x=xt(self.xpos), y=yt(self.ypos)+(segment.height*counter)+(segment.height/2)) # Add a half because of the bottom slider image
                 counter = counter + 1
         
             # New window size width, height
             self.spriteSlider.scale = scaleFac
             self.updateSliderPosition()
-            self.spriteBottom.update(x=(self.xpos/100)*width, y=(self.ypos/100)*height, scale=scaleFac)
-            self.spriteTop.update(x=(self.xpos/100)*width, y=self.ypos/100*height+(self.segmentSprites[0].height*(self.numSteps+0.5)), scale=(self.width/100*width)/topImg.width)
+            self.spriteBottom.update(x=xt(self.xpos), y=yt(self.ypos), scale=scaleFac)
+            self.spriteTop.update(x=xt(self.xpos), y=yt(self.ypos)+(self.segmentSprites[0].height*(self.numSteps+0.5)), scale=xt(self.width)/topImg.width)
             
         self.snapLastVal = 0
         # Called when a drag occurs on the slider
@@ -392,7 +407,7 @@ class UISlider(UIComponent):
         else:
             self.spriteSlider.update(x=self.segmentSprites[0].x, y=self.segmentSprites[0].y+((self.currentVal-self.min)/(self.max-self.min))*(self.segmentSprites[-1].y-self.segmentSprites[0].y))
         
-    def render(self, window):
+    def render(self, xt, yt):
         self.slideBatch.draw()
         
     
