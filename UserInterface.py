@@ -316,7 +316,7 @@ class UINavElement(UIComponent):
          
 class UILabel(UIComponent):
     def __init__(self, name, text, x, y, font_size):
-        UIComponent.__init__(self, name, x, y, 0, 0)
+        UIComponent.__init__(self, name, x, y, 2, 2)
         self.selectable = False
         self.text = text
         self.suffix = ""
@@ -332,6 +332,7 @@ class UILabel(UIComponent):
             self.textElement.y = yt(self.ypos) + self.offset_y
             
         self.setResizeHandler(on_resize)
+        self.update()
         
     def setPerPixelOffset(self, x, y):
         self.offset_x = x

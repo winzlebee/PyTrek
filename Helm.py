@@ -28,7 +28,7 @@ shipImg.anchor_y = shipImg.height/2
 
 pt_ui_initialZoom = 5
 
-pt_ui_navElement = UserInterface.UINavElement("navigation", 15, 15, 70, 70, True, shipImg, pt_ui_initialZoom)
+pt_ui_navElement = UserInterface.UINavElement("navigation", 20, 15, 70, 70, True, shipImg, pt_ui_initialZoom)
 
 # Buttons
 pt_ui_mapBtn = UserInterface.UIButton("mapBtn", "Map", 100-16, 100-9)
@@ -46,14 +46,15 @@ pt_ui_impulseSlider = UserInterface.UISlider("impulseSlider", 12.8, 240, 4, 0, 1
 pt_ui_zoomSlider = UserInterface.UISlider("zoomSlider", 92, 0, 3, pt_ui_initialZoom, 50, False)
 
 # Labels for sliders
-pt_ui_warpLabel = UserInterface.UILabel("warpLabel", "0", 3.3, 5, 8)
-pt_ui_warpLabel.setPrefix("Warp ")
+pt_ui_warpLabel = UserInterface.UILabel("warpLabel", "0", 5.4, 7.4, 16)
+pt_ui_impulseLabel = UserInterface.UILabel("impulseLabel", "0", 15, 10, 8)
+pt_ui_impulseLabel.setSuffix("%")
 
 def onslidechange_warpSlider(val):
     pt_ui_warpLabel.setText(str(val))
     
 def onslidechange_impulseSlider(val):
-    print("Impulse Slider:", val)
+    pt_ui_impulseLabel.setText(str(val*10))
 
 pt_ui_warpSlider.setValueChangeHandler(onslidechange_warpSlider)
 pt_ui_impulseSlider.setValueChangeHandler(onslidechange_impulseSlider)
@@ -75,6 +76,7 @@ helm_ui.addComponent(pt_ui_impulseSlider)
 helm_ui.addComponent(pt_ui_zoomSlider)
 
 helm_ui.addComponent(pt_ui_warpLabel)
+helm_ui.addComponent(pt_ui_impulseLabel)
 
 # Navigation Element
 helm_ui.addNavElement(pt_ui_navElement)
