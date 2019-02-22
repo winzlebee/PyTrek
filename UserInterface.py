@@ -8,6 +8,10 @@ from math import isclose
 import random
 import math
 
+# Global Font
+pyglet.font.add_file('resources/font.ttf')
+ui_font = 'pix PixelFJVerdana12pt'
+
 # Global imports for UI Components used in the entire user interface
 ui_btn = pyglet.resource.image('resources/ui_btn.png')
 ui_btn_hover = pyglet.resource.image('resources/ui_btn_hover.png')
@@ -317,7 +321,7 @@ class UIButton(UIComponent):
         self.text = text
         self.sprite = pyglet.sprite.Sprite(img=ui_btn)
         self.sprite_hover = pyglet.sprite.Sprite(img=ui_btn_hover)
-        self.textElement = pyglet.text.Label(text=self.text, font_name='Consolas', anchor_x="center", anchor_y="center")
+        self.textElement = pyglet.text.Label(text=self.text, font_name=ui_font, anchor_x="center", anchor_y="center")
         
         # Set the resize handler for the buttons in the User Interface
         def on_resize(xt, yt, toUi):
