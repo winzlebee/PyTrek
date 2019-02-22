@@ -32,10 +32,11 @@ class PyTrekUserInterface(object):
             for component in self.components:
                 xnorm = x / self.window.width * 100
                 ynorm = y / self.window.height * 100
-                if (xnorm > component.xpos and xnorm < component.xpos + component.width):
-                    if (ynorm > component.ypos and ynorm < component.ypos + component.height):
-                        # A click event has occurred
-                        return component
+                if component.selectable:
+                    if (xnorm > component.xpos and xnorm < component.xpos + component.width):
+                        if (ynorm > component.ypos and ynorm < component.ypos + component.height):
+                            # A click event has occurred
+                            return component
             return None
         
         # Register general event handlers
@@ -115,6 +116,8 @@ class UIComponent(object):
         self.width = w
         self.height = h
         
+        # Components are selectable by default
+        self.selectable = True
         self.hoverStatus = False
         
     # Sends the click in coordinates relative to the component's origin, in UI coordinates
@@ -165,6 +168,8 @@ class UIImageElement(UIComponent):
   def __init__(self, name, x, y, w, h, image):
     UIComponent.__init__(self, name, x, y, w, h)
     
+    # Images can't be selected
+    self.selectable = False
     self.sprite = pyglet.sprite.Sprite(img=image)
     
     def on_resize(xt, yt):
