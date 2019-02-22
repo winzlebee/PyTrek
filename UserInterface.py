@@ -350,7 +350,7 @@ class UIButton(UIComponent):
 class UISlider(UIComponent):
     
     # Define a slider with steps elements, a minimum value and a maxium value. Snap defines whether we should snap to the steps or not
-    def __init__(self, name, x, y, steps, minVal, maxVal, snap, topImg=ui_slider_top):
+    def __init__(self, name, x, y, steps, minVal, maxVal, snap):
         UIComponent.__init__(self, name, x, y, 4, 4*steps+16)
         self.numSteps = steps;
         self.min = minVal
@@ -362,8 +362,8 @@ class UISlider(UIComponent):
         self.slideBatch = pyglet.graphics.Batch()
         
         # Definition for sprites we're gonna use
-        self.spriteBottom = pyglet.sprite.Sprite(img=ui_slider_bottom, batch=self.slideBatch)
-        self.spriteTop = pyglet.sprite.Sprite(img=topImg, batch=self.slideBatch)
+        #self.spriteBottom = pyglet.sprite.Sprite(img=ui_slider_bottom, batch=self.slideBatch)
+        #self.spriteTop = pyglet.sprite.Sprite(img=topImg, batch=self.slideBatch)
         
         self.segmentSprites = []
         for i in range(self.numSteps):
@@ -377,14 +377,14 @@ class UISlider(UIComponent):
             counter = 0
             for segment in self.segmentSprites:
                 segment.scale = xt(self.width)/ui_slider_segment.width
-                segment.update(x=xt(self.xpos), y=yt(self.ypos)+(segment.height*counter)+(segment.height/2)) # Add a half because of the bottom slider image
+                segment.update(x=xt(self.xpos), y=yt(self.ypos)+(segment.height*counter)) # Add a half because of the bottom slider image
                 counter = counter + 1
         
             # New window size width, height
             self.spriteSlider.scale = xt(self.width)/ui_slider_button.width
             self.updateSliderPosition()
-            self.spriteBottom.update(x=xt(self.xpos), y=yt(self.ypos), scale=xt(self.width)/ui_slider_bottom.width)
-            self.spriteTop.update(x=xt(self.xpos), y=yt(self.ypos)+(self.segmentSprites[0].height*(self.numSteps+0.5)), scale=xt(self.width)/topImg.width)
+            #self.spriteBottom.update(x=xt(self.xpos), y=yt(self.ypos), scale=xt(self.width)/ui_slider_bottom.width)
+            #self.spriteTop.update(x=xt(self.xpos), y=yt(self.ypos)+(self.segmentSprites[0].height*(self.numSteps)), scale=xt(self.width)/topImg.width)
             
         self.snapLastVal = 0
         # Called when a drag occurs on the slider

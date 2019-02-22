@@ -43,14 +43,12 @@ pt_ui_engBtn = UserInterface.UIButton("mapBtn", "Engineering", 100-48, 100-8)
 pt_ui_mapBtn.setClickHandler(onclick_mapBtn)
 
 # Sliders
-
-pt_ui_impulseImg = pyglet.resource.image("resources/slider_impulse.png")
 pt_ui_sliderGroupImage = pyglet.resource.image("resources/helm_UI/background.png")
 
 pt_ui_sliderGroup = UserInterface.UIImageElement("sliderGroup", 0, 0, 20, 75, pt_ui_sliderGroupImage)
 
 pt_ui_warpSlider = UserInterface.UISlider("warpSlider", 0, 0, 5, 0, 4, True)
-pt_ui_impulseSlider = UserInterface.UISlider("impulseSlider", 8, 0, 3, 0, 10, True, pt_ui_impulseImg)
+pt_ui_impulseSlider = UserInterface.UISlider("impulseSlider", 8, 0, 3, 0, 10, True)
 pt_ui_zoomSlider = UserInterface.UISlider("zoomSlider", 92, 0, 3, pt_ui_initialZoom, 50, False)
 
 pt_ui_warpSlider.setValueChangeHandler(onslidechange_warpSlider)
