@@ -73,7 +73,7 @@ class PyTrekUserInterface(object):
         @self.window.event
         def on_resize(width, height):
             for component in self.components:
-                component.resizeWindow(self.uiToGlobalWidth, self.uiToGlobalHeight)
+                component.resizeWindow(self.uiToGlobalWidth, self.uiToGlobalHeight, self.globalToUi)
             # return pyglet.event.EVENT_HANDLED
                 
     # Function to convert ui coordinates to global coordinates
@@ -130,8 +130,8 @@ class UIComponent(object):
     def drag(self, x, y, dx, dy):
         if hasattr(self, 'sendDrag'): self.sendDrag(x, y, dx, dy)
         
-    def resizeWindow(self, width, height):
-        if hasattr(self, 'sendResize'): self.sendResize(width, height)
+    def resizeWindow(self, width, height, globUi):
+        if hasattr(self, 'sendResize'): self.sendResize(width, height, globUi)
         
     def getName(self):
         return self.name
@@ -172,7 +172,7 @@ class UIImageElement(UIComponent):
     self.selectable = False
     self.sprite = pyglet.sprite.Sprite(img=image)
     
-    def on_resize(xt, yt):
+    def on_resize(xt, yt, globUi):
       self.sprite.update(x=xt(self.xpos), y=yt(self.ypos), scale=xt(self.width)/self.sprite.image.width)
       
     self.setResizeHandler(on_resize)
@@ -217,7 +217,7 @@ class UINavElement(UIComponent):
             pyglet.clock.schedule_interval(update_ship, 1/60.0)
         
         # Set the resize handler for the navigation marker
-        def on_resize(xt, yt):
+        def on_resize(xt, yt, toUi):
             # New window size width, height
             self.sprite.update(x=xt(self.xpos+self.width/2), y=yt(self.ypos+self.height/2), scale=xt(4)/(self.sprite.image.width))
 
@@ -320,7 +320,7 @@ class UIButton(UIComponent):
         self.textElement = pyglet.text.Label(text=self.text, font_name='Consolas', anchor_x="center", anchor_y="center")
         
         # Set the resize handler for the buttons in the User Interface
-        def on_resize(xt, yt):
+        def on_resize(xt, yt, toUi):
             # New window size width, height
             self.sprite.update(x=xt(self.xpos), y=yt(self.ypos), scale=xt(self.width)/self.sprite.image.width)
             self.sprite_hover.update(x=xt(self.xpos), y=yt(self.ypos), scale=xt(self.width)/self.sprite_hover.image.width)
@@ -356,11 +356,12 @@ class UISlider(UIComponent):
     
     # Define a slider with steps elements, a minimum value and a maxium value. Snap defines whether we should snap to the steps or not
     def __init__(self, name, x, y, steps, minVal, maxVal, snap):
-        UIComponent.__init__(self, name, x, y, 4, 4*steps+16)
+        UIComponent.__init__(self, name, x, y, 4, 4*steps)
         self.numSteps = steps;
         self.min = minVal
         self.max = maxVal
         self.currentVal = self.min;
+        self.origYPos = y
         
         self.snapToStep = snap
         
@@ -376,15 +377,21 @@ class UISlider(UIComponent):
             
         self.spriteSlider = pyglet.sprite.Sprite(img=ui_slider_button, batch=self.slideBatch)
         
-        def on_resize(xt, yt):
+        def on_resize(xt, yt, toUi):
+            scaleFac = xt(self.width)/ui_slider_segment.width
+                
+            pixelPos = self.origYPos * scaleFac
         
             # Scale the segments first
             counter = 0
             for segment in self.segmentSprites:
-                segment.scale = xt(self.width)/ui_slider_segment.width
-                segment.update(x=xt(self.xpos), y=yt(self.ypos)+(segment.height*counter)) # Add a half because of the bottom slider image
+                segment.scale = scaleFac
+                segment.update(x=xt(self.xpos), y=pixelPos+(segment.height*counter)) # Add a half because of the bottom slider image if using it
                 counter = counter + 1
-        
+                
+            self.height = toUi(0, segment.height*counter)[1]
+            self.ypos = toUi(0, pixelPos)[1]
+                
             # New window size width, height
             self.spriteSlider.scale = xt(self.width)/ui_slider_button.width
             self.updateSliderPosition()
