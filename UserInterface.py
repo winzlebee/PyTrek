@@ -313,7 +313,49 @@ class UINavElement(UIComponent):
         pyglet.gl.glLoadIdentity()
             
         self.sprite.draw()
-                
+         
+class UILabel(UIComponent):
+    def __init__(self, name, text, x, y, font_size):
+        UIComponent.__init__(self, name, x, y, 0, 0)
+        self.selectable = False
+        self.text = text
+        self.suffix = ""
+        self.prefix = ""
+        
+        self.offset_x = 0
+        self.offset_y = 0
+        
+        self.textElement = pyglet.text.Label(font_name=ui_font, anchor_x="center", anchor_y="center", font_size=font_size)
+        
+        def on_resize(xt, yt, toUi):
+            self.textElement.x = xt(self.xpos) + self.offset_x
+            self.textElement.y = yt(self.ypos) + self.offset_y
+            
+        self.setResizeHandler(on_resize)
+        
+    def setPerPixelOffset(self, x, y):
+        self.offset_x = x
+        self.offset_y = y
+        
+    def update(self):
+        self.textElement.text = self.prefix + self.text + self.suffix
+        
+    def setText(self, text):
+        self.text = text
+        self.update()
+        
+    def setPrefix(self, text):
+        self.prefix = text
+        self.update()
+        
+    def setSuffix(self, text):
+        self.suffix = text
+        self.update()
+        
+    def render(self, xt, yt):
+        self.textElement.draw()
+    
+        
 class UIButton(UIComponent):
     # Buttons are always a fixed size so we don't worry about setting their size
     def __init__(self, name, text, x, y):
@@ -346,6 +388,7 @@ class UIButton(UIComponent):
         
     def setText(text):
         self.text = text;
+        self.textElement.text = text
         
     def render(self, xt, yt):
         # TODO: Later we're gonna use OpenGL to do this

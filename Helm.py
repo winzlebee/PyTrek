@@ -18,12 +18,6 @@ helm_ui = UserInterface.PyTrekUserInterface(window)
 
 def onclick_mapBtn(x, y):
     print("Map button has been clicked.")
-    
-def onslidechange_warpSlider(val):
-    print("Warp Slider:", val)
-    
-def onslidechange_impulseSlider(val):
-    print("Impulse Slider:", val)
 
 # UI Components for the helm
 
@@ -51,6 +45,16 @@ pt_ui_warpSlider = UserInterface.UISlider("warpSlider", 3.3, 182, 5, 0, 4, True)
 pt_ui_impulseSlider = UserInterface.UISlider("impulseSlider", 12.8, 240, 4, 0, 10, True)
 pt_ui_zoomSlider = UserInterface.UISlider("zoomSlider", 92, 0, 3, pt_ui_initialZoom, 50, False)
 
+# Labels for sliders
+pt_ui_warpLabel = UserInterface.UILabel("warpLabel", "0", 3.3, 5, 8)
+pt_ui_warpLabel.setPrefix("Warp ")
+
+def onslidechange_warpSlider(val):
+    pt_ui_warpLabel.setText(str(val))
+    
+def onslidechange_impulseSlider(val):
+    print("Impulse Slider:", val)
+
 pt_ui_warpSlider.setValueChangeHandler(onslidechange_warpSlider)
 pt_ui_impulseSlider.setValueChangeHandler(onslidechange_impulseSlider)
     
@@ -69,6 +73,8 @@ helm_ui.addComponent(pt_ui_sliderGroup)
 helm_ui.addComponent(pt_ui_warpSlider)
 helm_ui.addComponent(pt_ui_impulseSlider)
 helm_ui.addComponent(pt_ui_zoomSlider)
+
+helm_ui.addComponent(pt_ui_warpLabel)
 
 # Navigation Element
 helm_ui.addNavElement(pt_ui_navElement)
