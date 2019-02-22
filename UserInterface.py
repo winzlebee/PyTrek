@@ -326,8 +326,8 @@ class UIButton(UIComponent):
         # Set the resize handler for the buttons in the User Interface
         def on_resize(xt, yt, toUi):
             # New window size width, height
-            self.sprite.update(x=xt(self.xpos), y=yt(self.ypos), scale=xt(self.width)/self.sprite.image.width)
-            self.sprite_hover.update(x=xt(self.xpos), y=yt(self.ypos), scale=xt(self.width)/self.sprite_hover.image.width)
+            self.sprite.update(x=xt(self.xpos), y=yt(self.ypos), scale_x=xt(self.width)/self.sprite.image.width, scale_y=yt(self.height)/self.sprite.image.height)
+            self.sprite_hover.update(x=xt(self.xpos), y=yt(self.ypos), scale_x=xt(self.width)/self.sprite_hover.image.width, scale_y=yt(self.height)/self.sprite.image.height)
             
             # Placing of the text element
             self.textElement.font_size = xt(self.width)/20

@@ -37,9 +37,9 @@ pt_ui_initialZoom = 5
 pt_ui_navElement = UserInterface.UINavElement("navigation", 15, 15, 70, 70, True, shipImg, pt_ui_initialZoom)
 
 # Buttons
-pt_ui_mapBtn = UserInterface.UIButton("mapBtn", "Map", 100-16, 100-8)
-pt_ui_visBtn = UserInterface.UIButton("mapBtn", "Visual", 100-32, 100-8)
-pt_ui_engBtn = UserInterface.UIButton("mapBtn", "Engineering", 100-48, 100-8)
+pt_ui_mapBtn = UserInterface.UIButton("mapBtn", "Map", 100-16, 100-9)
+pt_ui_visBtn = UserInterface.UIButton("mapBtn", "Visual", 100-32, 100-9)
+pt_ui_engBtn = UserInterface.UIButton("mapBtn", "Engineering", 100-48, 100-9)
 pt_ui_mapBtn.setClickHandler(onclick_mapBtn)
 
 # Sliders
