@@ -15,9 +15,10 @@ Programming TODO
 - Add GUI for warp and heading to helm
     - Sliders - DONE
     - Heading Changer - DONE
-- Add labels to GUI class
+- Add labels to GUI class - DONE
 - Map view for main display
-- Multiplayer integration for helm
+- Multiplayer integration for helm - DONE
+- Modular display screen (possibly in UI class? probably separate though - with a render() method)
 - Add items that go on the map 
     - Star Systems
     - Space Stations
@@ -35,4 +36,5 @@ Long term
 - Engineering module platformer
 
 ANNOYANCES AND BUGS
-- Clip the map view to only the dimensions of it's viewport
+- Clip the map view to only the dimensions of it's viewport (fix snipping) - PARTIALLY DONE
+- Move netcode away from main jar file IE: Make EngineerView class etc.
