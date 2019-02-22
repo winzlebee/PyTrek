@@ -3,13 +3,21 @@ from pyglet.window import key
 
 import random
 import ThreadedServer
+import pickle
+import messages
+import Util
 
-pt_numStars = 5000
-pt_starStdDev = 3
+pt_numStars = 10000
+pt_starStdDev = 5
 
 pt_spaceshipSpeed = 0.0
 pt_spaceshipPosition = [0.0, 0.0, 0.0]
 pt_spaceshipRotation = [0.0, 0.0, 0.0]
+
+pt_rotating = False
+pt_rotTimePassed = 0
+pt_oldRotation = 0
+pt_newRotation = 0
 
 # Generates random stars in a nebula centred on the origin
 def generateStars(numStars, stdDev):
@@ -26,15 +34,28 @@ def rotate(rotation):
     global pt_spaceshipRotation
     # Combine the rotation and make it modulo 360 for compatability
     pt_spaceshipRotation = [(x + y) % 360 for x, y in zip(pt_spaceshipRotation, rotation)]
+    
+def setRotation(rot):
+    global pt_spaceshipRotation
+    pt_spaceshipRotation = rot
    
 def recieveTerminalRequest(client, msg):
     global pt_spaceshipSpeed
-    finalMsg = msg.decode()
-    print("Message Recieved:", finalMsg)
+    global pt_rotating, pt_newRotation
     
-    if finalMsg[0] == 'w':
-        # We're changing warp level
-        pt_spaceshipSpeed = float(finalMsg[1:])
+    message = pickle.loads(msg)
+    
+    if isinstance(message, messages.SpeedChangedMessage):
+        # Changing the speed
+        pt_spaceshipSpeed = message.warp + (message.impulse*0.1)
+    elif isinstance(message, messages.HeadingChangedMessage):
+        if pt_rotating:
+            # If we're already rotating, use whatever the current rotation is as the old rotation
+            cancelRotation()
+        pt_rotating = True
+        pt_newRotation = message.heading
+        print("New Rotation recieved:", pt_newRotation)
+        
     
 # Initialize the server - we're currently in the server module
 pt_server = ThreadedServer.PyTrekServer('', 23545, recieveTerminalRequest);
@@ -44,11 +65,23 @@ pt_server.start()
 window = pyglet.window.Window(1280, 720)
 keys = key.KeyStateHandler()
 
+def cancelRotation():
+    global pt_rotTimePassed, pt_oldRotation, pt_rotating
+    pt_rotTimePassed = 0
+    pt_oldRotation = pt_spaceshipRotation[1]
+    pt_rotating = False
+
 def update(delta):
-    if keys[key.A]:
-        rotate([0.0, -40.0*delta, 0.0])
-    elif keys[key.D]:
-        rotate([0.0, 40.0*delta, 0.0])
+    global pt_rotTimePassed
+    
+    # Perform rotation then movement
+    if pt_rotating:
+        progress = Util.getRotationInterval(pt_rotTimePassed, 45, pt_oldRotation, pt_newRotation)
+        if not progress > 1:
+            setRotation([0.0, Util.angleSmoothLerp(pt_oldRotation, pt_newRotation, progress), 0.0])
+            pt_rotTimePassed += delta
+        elif pt_rotTimePassed != 0:
+            cancelRotation()
         
     move([0.0, 0.0, pt_spaceshipSpeed*delta])
 
@@ -56,17 +89,6 @@ def update(delta):
 pyglet.clock.schedule_interval(update, 1/60.0)
 
 stars = generateStars(pt_numStars, pt_starStdDev);
-
-# Input handling. For now we just override spaceship speed.
-@window.event
-def on_key_press(symbol, modifiers):
-    global pt_spaceshipSpeed
-    if symbol == key.W:
-        pt_spaceshipSpeed = pt_spaceshipSpeed + 1.0
-    if symbol == key.S:
-        pt_spaceshipSpeed = pt_spaceshipSpeed - 1.0
-
-window.push_handlers(keys)
 
 @window.event
 def on_draw():

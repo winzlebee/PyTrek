@@ -16,7 +16,7 @@ class PyTrekClient(object):
     def listen(self):
         # Listen for requests
         while not self.isClose:
-            print("Recieved: " + self.sock.recv(1024).decode())
+          data = self.sock.recv(1024)
             
     def close(self):
         self.isClose = True
@@ -24,7 +24,7 @@ class PyTrekClient(object):
         self.sock.close()
         
     def sendMessage(self, msg):
-        self.sock.send(msg.encode())
+        self.sock.send(msg)
     
     
 

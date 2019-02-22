@@ -1,6 +1,10 @@
+
+# Local Imports
 import ThreadedClient
 import UserInterface
+import messages
 
+import pickle
 import pyglet
 from pyglet.gl import *
 
@@ -8,10 +12,10 @@ glEnable(GL_TEXTURE_2D)
 glEnable(GL_DEPTH_TEST)
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 
-#hostname = input("Enter Server IP: ")
+hostname = input("Enter Server IP: ")
 
-#helm_client = ThreadedClient.PyTrekClient(hostname)
-#helm_client.start()
+helm_client = ThreadedClient.PyTrekClient(hostname)
+helm_client.start()
 
 window = pyglet.window.Window(1280, 720, resizable=True)
 helm_ui = UserInterface.PyTrekUserInterface(window)
@@ -50,12 +54,25 @@ pt_ui_warpLabel = UserInterface.UILabel("warpLabel", "0", 5.4, 7.4, 16)
 pt_ui_impulseLabel = UserInterface.UILabel("impulseLabel", "0", 15, 10, 8)
 pt_ui_impulseLabel.setSuffix("%")
 
+# Handlers for various things, sending messages to the big server
+
+def sendHeadingChange(newHeading):
+  msg = pickle.dumps(messages.HeadingChangedMessage(newHeading))
+  helm_client.sendMessage(msg)
+
+def sendSpeedChange():
+  msg = pickle.dumps(messages.SpeedChangedMessage(pt_ui_warpSlider.getCurrentValue(), pt_ui_impulseSlider.getCurrentValue()))
+  helm_client.sendMessage(msg)
+
 def onslidechange_warpSlider(val):
     pt_ui_warpLabel.setText(str(val))
+    sendSpeedChange()
     
 def onslidechange_impulseSlider(val):
     pt_ui_impulseLabel.setText(str(val*10))
+    sendSpeedChange()
 
+pt_ui_navElement.setHeadingChangedHandler(sendHeadingChange)
 pt_ui_warpSlider.setValueChangeHandler(onslidechange_warpSlider)
 pt_ui_impulseSlider.setValueChangeHandler(onslidechange_impulseSlider)
     
@@ -90,5 +107,6 @@ def on_draw():
     helm_ui.render()
     
 pyglet.app.run()
-        
-#helm_client.close()
+
+if hostname:        
+  helm_client.close()

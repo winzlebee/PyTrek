@@ -35,14 +35,11 @@ class PyTrekServer(object):
     def listenToClient(self, client, address):
         size = 1024
         while not self.isClose:
-            try:
-                data = client.recv(size)
-                if data:
-                    # Set the response to echo back the recieved data 
-                    response = data;
-                    self.callbackFunc(client, response)
-                else:
-                    raise error('Client disconnected')
-            except:
-                client.close()
-                return False
+            data = client.recv(size)
+            if data:
+                # Set the response to echo back the recieved data 
+                response = data;
+                self.callbackFunc(client, response)
+            else:
+                raise Exception('Client disconnected')
+                return True

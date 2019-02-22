@@ -198,7 +198,7 @@ class UINavElement(UIComponent):
         self.oldDirection = 0
         self.newDirection = 0
         
-        self.rotationSpeed = 90
+        self.rotationSpeed = 45
         self.rotTimePassed = 0
         
         # The navigation image to use is passed as a constructor to the UINavElement
@@ -210,7 +210,7 @@ class UINavElement(UIComponent):
         # Update per frame based on the rotation speed of the ship
         def update_ship(delta):
             if self.rotating:
-                progress = abs(self.rotTimePassed/(Util.shortAngleDist(self.oldDirection, self.newDirection)/self.rotationSpeed))
+                progress = Util.getRotationInterval(self.rotTimePassed, self.rotationSpeed, self.oldDirection, self.newDirection)
                 if not progress > 1:
                     self.sprite.rotation = Util.angleSmoothLerp(self.oldDirection, self.newDirection, progress)
                     self.rotTimePassed += delta
@@ -240,6 +240,7 @@ class UINavElement(UIComponent):
                     self.cancelRotation()
                     
                 self.newDirection = -math.degrees(math.atan2(y-(self.width/2), x-(self.height/2))) + 90
+                if hasattr(self, 'handleHeadingChange'): self.handleHeadingChange(self.newDirection)
                 self.rotating = True
                 
             self.setClickHandler(clickHandler)
@@ -255,6 +256,9 @@ class UINavElement(UIComponent):
     # Set the number of degrees per second
     def setRotationSpeed(self, rot):
         self.rotationSpeed = rot
+        
+    def setHeadingChangedHandler(self, handle):
+        self.handleHeadingChange = handle
         
     # Zoom factor is how much we need to scale things that are on the map
     def getZoomFactor(self):
@@ -472,6 +476,12 @@ class UISlider(UIComponent):
     def slideChanged(self, newVal):
         if hasattr(self, 'sendValueChanged'): 
             self.sendValueChanged(max(0, newVal))
+            
+    def getCurrentValue(self):
+        if self.snapToStep:
+          return round(self.currentVal)
+        else:
+          return self.currentVal
     
     def setValueChangeHandler(self, newFunc):
         self.sendValueChanged = newFunc
