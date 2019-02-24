@@ -8,8 +8,8 @@ import Util
 class GalaxyView:
     def __init__(self, window, fov):
         # View variables - not influenced by the network state
-        self.view_numStars = 1000
-        self.view_starStdDev = 10
+        self.view_numStars = 10000
+        self.view_starStdDev = 128
         self.view_window = window
         self.view_fov = fov
         
