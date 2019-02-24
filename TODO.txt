@@ -18,7 +18,7 @@ Programming TODO
 - Add labels to GUI class - DONE
 - Map view for main display
 - Multiplayer integration for helm - DONE
-- Modular display screen (possibly in UI class? probably separate though - with a render() method)
+- Modular display screen - DONE
 - Add items that go on the map 
     - Star Systems
     - Space Stations

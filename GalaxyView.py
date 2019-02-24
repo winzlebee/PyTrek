@@ -1,6 +1,7 @@
 from pyglet.gl import *
 
 import random
+import math
 import Util
 
 # This class encapsulates all things to do with displaying a view of the galaxy
@@ -35,7 +36,7 @@ class GalaxyView:
                 elif self.rotTimePassed != 0:
                     self.cancelRotation()
                 
-            self.move([0.0, 0.0, self.spaceshipSpeed*delta])
+            self.move(self.spaceshipSpeed*delta)
 
         pyglet.clock.schedule_interval(update, 1/60.0)
         
@@ -54,8 +55,12 @@ class GalaxyView:
             stars.append((random.gauss(0.0, self.view_starStdDev)-0.5))
         return stars
     
+    # Moves the spaceship along the correct direction TODO: add rising and falling to second argument
     def move(self, movement):
-        self.spaceshipPosition = [x + y for x, y in zip(self.spaceshipPosition, movement)]
+        self.spaceshipPosition = [self.spaceshipPosition[0] + movement*math.cos(math.radians(self.spaceshipRotation[1]+90)),
+                                  self.spaceshipPosition[1],
+                                  self.spaceshipPosition[2] + movement*math.sin(math.radians(self.spaceshipRotation[1]+90))]
+        #self.spaceshipPosition = [x + y for x, y in zip(self.spaceshipPosition, movement)]
         
     def rotate(self, rotation):
         # Combine the rotation and make it modulo 360 for compatability
