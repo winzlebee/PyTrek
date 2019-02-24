@@ -17,3 +17,6 @@ def angleSmoothLerp(a0, a1, t):
     
 def getRotationInterval(timePassed, rotationSpeed, oldDirection, newDirection):
     return abs(timePassed/(shortAngleDist(oldDirection, newDirection)/rotationSpeed))
+
+def getSpeedFromWarpImpulse(warp, impulse):
+    return warp + (impulse*0.1)
