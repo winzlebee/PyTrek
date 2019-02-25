@@ -75,6 +75,10 @@ class GalaxyView:
     def setSpeed(self, speed):
         self.spaceshipSpeed = speed
         
+    # A map can be loaded. Then its corresponding objects will be displayed
+    def loadMap(self, mapLoad):
+        self.map = mapLoad
+        
     def cancelRotation(self):
         self.rotTimePassed = 0
         self.oldRotation = self.spaceshipRotation[1]

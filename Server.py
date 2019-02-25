@@ -1,10 +1,14 @@
 import pyglet
+import pickle
 
 import GalaxyView
 import ThreadedServer
-import pickle
 import messages
 import Util
+
+# Map Stuff
+import MapGenerator
+import Map
 
 def recieveTerminalRequest(client, msg):
     message = pickle.loads(msg)
@@ -20,11 +24,17 @@ def recieveTerminalRequest(client, msg):
 pt_server = ThreadedServer.PyTrekServer('', 23545, recieveTerminalRequest);
 pt_server.start()
 
+# Generate or load a map
+map_size = 64
+mapLoader = MapGenerator.GaussianGenerator(map_size, map_size, 64, 24) # (width, height, spread, number)
+playMap = Map.Map(map_size, map_size, mapLoader)
+
 # Setup the window    
 window = pyglet.window.Window(1280, 720)
 
 # Format is window, fov
 mainView = GalaxyView.GalaxyView(window, 80)
+mainView.loadMap(playMap)
 
 @window.event
 def on_draw():
