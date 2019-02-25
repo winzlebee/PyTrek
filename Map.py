@@ -3,7 +3,7 @@ import pyglet
 import MapGenerator
 
 # Atlas containing all of the map markers
-map_markers = pyglet.resource.image("resources/map/markers.png")
+map_markers = pyglet.resource.image("resources/map/markers_g.gif")
 
 def getMarker(name):
     marker = None
