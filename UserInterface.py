@@ -201,6 +201,8 @@ class UINavElement(UIComponent):
         self.rotationSpeed = 45
         self.rotTimePassed = 0
         
+        self.map = None
+        
         # The navigation image to use is passed as a constructor to the UINavElement
         self.sprite = pyglet.sprite.Sprite(img=navImage)
         
@@ -259,6 +261,10 @@ class UINavElement(UIComponent):
         
     def setHeadingChangedHandler(self, handle):
         self.handleHeadingChange = handle
+        
+    # Set the map that is to be displayed
+    def setMap(self, newMap):
+        self.map = newMap
         
     # Zoom factor is how much we need to scale things that are on the map
     def getZoomFactor(self):

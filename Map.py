@@ -38,9 +38,9 @@ class MapObject(object):
         self.x = xpos
         self.y = ypos
         
-        self.img = getMarker('marker')
+        self.img = 'marker'
         
     def getImage(self):
-        return self.img
+        return getMarker(self.img)
         
     

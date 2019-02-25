@@ -10,6 +10,11 @@ import Util
 import MapGenerator
 import Map
 
+# Generate or load a map
+map_size = 64
+mapLoader = MapGenerator.GaussianGenerator(map_size, map_size, 64, 24) # (width, height, spread, number)
+playMap = Map.Map(map_size, map_size, mapLoader)
+
 def recieveTerminalRequest(client, msg):
     message = pickle.loads(msg)
     
@@ -19,15 +24,17 @@ def recieveTerminalRequest(client, msg):
     elif isinstance(message, messages.HeadingChangedMessage):
         mainView.setHeading(message.heading)
         
+def clientConnected(client, address):
+    # Send the client a copy of the map
+    print("Client Connected:", client)
+    print("Sending...", pickle.dumps(messages.MapMessage(playMap)))
+    client.send(pickle.dumps(messages.MapMessage(playMap)))
     
 # Initialize the server - we're currently in the server module. Third argument is callback for recieving a request.
 pt_server = ThreadedServer.PyTrekServer('', 23545, recieveTerminalRequest);
-pt_server.start()
+pt_server.setClientConnectCallback(clientConnected)
 
-# Generate or load a map
-map_size = 64
-mapLoader = MapGenerator.GaussianGenerator(map_size, map_size, 64, 24) # (width, height, spread, number)
-playMap = Map.Map(map_size, map_size, mapLoader)
+pt_server.start()
 
 # Setup the window    
 window = pyglet.window.Window(1280, 720)

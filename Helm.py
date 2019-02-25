@@ -12,7 +12,7 @@ glEnable(GL_TEXTURE_2D)
 glEnable(GL_DEPTH_TEST)
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 
-hostname = input("Enter Server IP: ")
+hostname = input("Enter Server IP: ")    
 
 helm_client = ThreadedClient.PyTrekClient(hostname)
 helm_client.start()
@@ -71,6 +71,16 @@ def onslidechange_warpSlider(val):
 def onslidechange_impulseSlider(val):
     pt_ui_impulseLabel.setText(str(val*10))
     sendSpeedChange()
+
+# Client (helm) has recieved a message from the server    
+def messageRecieved(msg):
+    message = pickle.loads(msg)
+    print(message)
+    if isinstance(message, messages.MapMessage):
+        pt_ui_navElement.setMap(message.map)
+        print("Map updated and loaded. Map data:", message.map)
+        
+helm_client.setMessageRecievedCallback(messageRecieved)
 
 pt_ui_navElement.setHeadingChangedHandler(sendHeadingChange)
 pt_ui_warpSlider.setValueChangeHandler(onslidechange_warpSlider)

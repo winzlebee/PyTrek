@@ -31,15 +31,22 @@ class PyTrekServer(object):
             client, address = self.sock.accept()
             client.settimeout(60)
             threading.Thread(target = self.listenToClient,args = (client,address)).start()
+            
+    def setClientConnectCallback(self, callback):
+        self.clientConnected = callback
 
     def listenToClient(self, client, address):
         size = 1024
+        clientInit = False
         while not self.isClose:
+            if not clientInit:
+                if hasattr(self, 'clientConnected'): self.clientConnected(client, address)
+                clientInit = True
             data = client.recv(size)
             if data:
                 # Set the response to echo back the recieved data 
                 response = data;
                 self.callbackFunc(client, response)
             else:
-                raise Exception('Client disconnected')
+                print('Client', client, 'disconnected')
                 return True
