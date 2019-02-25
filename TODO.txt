@@ -44,6 +44,7 @@ Programming TODO
 
 Long term
 - Engineering module platformer
+- Tractor beam
 
 ANNOYANCES AND BUGS
 - Clip the map view to only the dimensions of it's viewport (fix snipping) - PARTIALLY DONE
