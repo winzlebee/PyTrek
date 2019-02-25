@@ -14,9 +14,6 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 
 hostname = input("Enter Server IP: ")    
 
-helm_client = ThreadedClient.PyTrekClient(hostname)
-helm_client.start()
-
 window = pyglet.window.Window(1280, 720, resizable=True)
 helm_ui = UserInterface.PyTrekUserInterface(window)
 
@@ -72,16 +69,6 @@ def onslidechange_impulseSlider(val):
     pt_ui_impulseLabel.setText(str(val*10))
     sendSpeedChange()
 
-# Client (helm) has recieved a message from the server    
-def messageRecieved(msg):
-    message = pickle.loads(msg)
-    print(message)
-    if isinstance(message, messages.MapMessage):
-        pt_ui_navElement.setMap(message.map)
-        print("Map updated and loaded. Map data:", message.map)
-        
-helm_client.setMessageRecievedCallback(messageRecieved)
-
 pt_ui_navElement.setHeadingChangedHandler(sendHeadingChange)
 pt_ui_warpSlider.setValueChangeHandler(onslidechange_warpSlider)
 pt_ui_impulseSlider.setValueChangeHandler(onslidechange_impulseSlider)
@@ -109,6 +96,19 @@ helm_ui.addComponent(pt_ui_impulseLabel)
 helm_ui.addNavElement(pt_ui_navElement)
 
 # Pyglet code, send messages to server somewhere in here
+
+# Client (helm) has recieved a message from the server    
+def messageRecieved(msg):
+    message = pickle.loads(msg)
+    print(message)
+    if isinstance(message, messages.MapMessage):
+        pt_ui_navElement.setMap(message.map)
+        helm_client.sendMessage(pickle.dumps(messages.Message())) # Send a blank message as acknowledgement
+        print("Map updated and loaded.")
+
+helm_client = ThreadedClient.PyTrekClient(hostname)
+helm_client.setMessageRecievedCallback(messageRecieved)
+helm_client.start()
 
 @window.event
 def on_draw():

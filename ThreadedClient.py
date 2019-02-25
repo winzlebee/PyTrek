@@ -16,7 +16,7 @@ class PyTrekClient(object):
     def listen(self):
         # Listen for requests
         while not self.isClose:
-          data = self.sock.recv(1024)
+          data = self.sock.recv(2048)
           if data and hasattr(self, 'messageRecieved'):
             self.messageRecieved(data)
           

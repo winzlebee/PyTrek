@@ -27,7 +27,6 @@ def recieveTerminalRequest(client, msg):
 def clientConnected(client, address):
     # Send the client a copy of the map
     print("Client Connected:", client)
-    print("Sending...", pickle.dumps(messages.MapMessage(playMap)))
     client.send(pickle.dumps(messages.MapMessage(playMap)))
     
 # Initialize the server - we're currently in the server module. Third argument is callback for recieving a request.

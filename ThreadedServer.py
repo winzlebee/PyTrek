@@ -39,11 +39,13 @@ class PyTrekServer(object):
         size = 1024
         clientInit = False
         while not self.isClose:
+            # Keep trying to send a message until the client sends one back
             if not clientInit:
                 if hasattr(self, 'clientConnected'): self.clientConnected(client, address)
-                clientInit = True
+                
             data = client.recv(size)
             if data:
+                clientInit = True
                 # Set the response to echo back the recieved data 
                 response = data;
                 self.callbackFunc(client, response)
