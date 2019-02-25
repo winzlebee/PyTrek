@@ -1,9 +1,10 @@
-Time to get Serious
+Time to get Serious.
+Eventually there will be 4 modules: Helm, Weapons, Engineering and Communications. Characters will have their own avatar when on planets
 
 Art assets TODO
 - Icons for the sliders on the helm
     - Zoom icon
-    - Impulse icon
+    - Impulse icon - DONE
     - Warp Icon
 - Find a cool font to use
 - Different ship models
@@ -16,21 +17,30 @@ Programming TODO
     - Sliders - DONE
     - Heading Changer - DONE
 - Add labels to GUI class - DONE
-- Map view for main display
 - Multiplayer integration for helm - DONE
 - Modular display screen - DONE
+- Map class and map random generation - DONE
+- View map components on helm and download map - DONE
+- Make the ship move on the helm's screen
+- Add 3D models for map items to the main screen
+    - Make sure movement matches view on helm
+    - Skybox
+- Map view for main display
+- Allow the network client to change the main view to the map
 - Add items that go on the map 
     - Star Systems
-    - Space Stations
+    - Space Stations (And shops!)
     - Asteroid fields
-- Allow the network client to change the main view to the map
-- Add spaceship model
-- Add space station model
+    - Planets
+- Add spaceship model/Enemy fighters
+- Basic enemy ship AI
 - Weapons targeting module
 - Refueling & Weapon inventory
-- Skybox
 - Nebulas
 - Warp signature visual
+- Helm UI Refactor for efficiency
+    - Remove fixed-function OpenGL calls and replace with grid image and star images
+    - Only update the display when something changes, not on render.
 
 Long term
 - Engineering module platformer
