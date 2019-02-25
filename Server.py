@@ -36,7 +36,7 @@ pt_server.setClientConnectCallback(clientConnected)
 pt_server.start()
 
 # Setup the window    
-window = pyglet.window.Window(1280, 720)
+window = pyglet.window.Window(1280, 720, resizable=True)
 
 # Format is window, fov
 mainView = GalaxyView.GalaxyView(window, 80)
