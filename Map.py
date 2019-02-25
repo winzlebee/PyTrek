@@ -43,4 +43,7 @@ class MapObject(object):
     def getImage(self):
         return getMarker(self.img)
         
+    def getSprite(self):
+        return pyglet.sprite.Sprite(img=self.getImage())
+        
     

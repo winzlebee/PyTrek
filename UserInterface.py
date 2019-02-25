@@ -321,7 +321,14 @@ class UINavElement(UIComponent):
         pyglet.gl.glDisable(pyglet.gl.GL_SCISSOR_TEST)
             
         pyglet.gl.glLoadIdentity()
-            
+        
+        # Draw all the map markers
+        for mapelem in self.map.getElements():
+            xnorm = ((mapelem.x/self.map.width)-0.5)*(self.getZoomFactor()/10)+0.5
+            ynorm = ((mapelem.y/self.map.height)-0.5)*(self.getZoomFactor()/10)+0.5
+            mapelem.getImage().blit(xt(self.xpos + self.width*max(0, min(1, xnorm))), yt(self.ypos + self.height*max(0, min(1, ynorm))))
+        
+        # Draw the ship at the very last time    
         self.sprite.draw()
          
 class UILabel(UIComponent):
