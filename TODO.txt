@@ -26,6 +26,7 @@ Programming TODO
     - Make sure movement matches view on helm
     - Skybox
 - Map view for main display
+- Make client send keepalive messages at least every 60 seconds
 - Allow the network client to change the main view to the map
 - Add items that go on the map 
     - Star Systems
