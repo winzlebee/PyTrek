@@ -205,6 +205,10 @@ class UINavElement(UIComponent):
         self.rotationSpeed = 45
         self.rotTimePassed = 0
         
+        self.worldx = 0
+        self.worldy = 0
+        self.speed = 0
+        
         self.map = None
         
         # The navigation image to use is passed as a constructor to the UINavElement
@@ -222,6 +226,9 @@ class UINavElement(UIComponent):
                     self.rotTimePassed += delta
                 elif self.rotTimePassed != 0:
                     self.cancelRotation()
+                    
+            if self.speed > 0:
+                self.moveShip(self.speed*delta)
         
         if self.control:    
             pyglet.clock.schedule_interval(update_ship, 1/60.0)
@@ -274,6 +281,17 @@ class UINavElement(UIComponent):
     def getZoomFactor(self):
         return self.zoomLevel
         
+    def setSpeed(self, speed):
+        self.speed = speed
+        
+    def moveShip(self, speed):
+        self.worldx += math.sin(math.radians(self.sprite.rotation))*speed
+        self.worldy += math.cos(math.radians(self.sprite.rotation))*speed
+        
+    def setShipPosition(self, worldx, worldy):
+        self.worldx = worldx
+        self.worldy = worldy
+        
     def render(self, xt, yt):
         numLines = round(100/self.zoomLevel+2)
     
@@ -316,7 +334,7 @@ class UINavElement(UIComponent):
         pyglet.graphics.draw((round(numLines/2)-1)*8, pyglet.gl.GL_LINES,
             ('v2f', lines))
             
-        pyglet.gl.glTranslatef(xt(self.xpos+self.width/2), yt(self.ypos+self.height/2), 0)
+        pyglet.gl.glTranslatef(xt(self.xpos+self.width/2)-self.worldx, yt(self.ypos+self.height/2)-self.worldy, 0)
         pyglet.gl.glScalef(self.getZoomFactor(), self.getZoomFactor(), 0.0)
             
         pyglet.graphics.draw(500, pyglet.gl.GL_POINTS,
@@ -332,8 +350,8 @@ class UINavElement(UIComponent):
         
         # Draw all the map markers
         for mapelem in self.map.getElements():
-            xnorm = max(0, min(1, ((mapelem.x/self.map.width)-0.5)*(self.getZoomFactor()/10)+0.5))
-            ynorm = max(0, min(1, ((mapelem.y/self.map.height)-0.5)*(self.getZoomFactor()/10)+0.5))
+            xnorm = max(0, min(1, (((mapelem.x-self.worldx)/self.map.width)-0.5)*(self.getZoomFactor()/10)+0.5))
+            ynorm = max(0, min(1, (((mapelem.y-self.worldy)/self.map.height)-0.5)*(self.getZoomFactor()/10)+0.5))
             ui_map_markers.blit(xt(self.xpos + self.width*xnorm), yt(self.ypos + self.height*ynorm))
             
         pyglet.gl.glDisable(pyglet.gl.GL_BLEND)

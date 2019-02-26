@@ -3,6 +3,7 @@
 import ThreadedClient
 import UserInterface
 import messages
+import Util
 
 import pickle
 import pyglet
@@ -59,6 +60,7 @@ def sendHeadingChange(newHeading):
 
 def sendSpeedChange():
   msg = pickle.dumps(messages.SpeedChangedMessage(pt_ui_warpSlider.getCurrentValue(), pt_ui_impulseSlider.getCurrentValue()))
+  pt_ui_navElement.setSpeed(Util.getSpeedFromWarpImpulse(pt_ui_warpSlider.getCurrentValue(), pt_ui_impulseSlider.getCurrentValue()))
   helm_client.sendMessage(msg)
 
 def onslidechange_warpSlider(val):
