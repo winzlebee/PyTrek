@@ -21,7 +21,7 @@ Programming TODO
 - Modular display screen - DONE
 - Map class and map random generation - DONE
 - View map components on helm and download map - DONE
-- Make the ship move on the helm's screen
+- Make the ship move on the helm's screen - DONE
 - Add 3D models for map items to the main screen
     - Make sure movement matches view on helm
     - Skybox

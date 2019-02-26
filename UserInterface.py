@@ -1,4 +1,5 @@
 import Util
+import Map
 
 import pyglet
 from pyglet.window import mouse
@@ -21,10 +22,6 @@ ui_slider_top = pyglet.resource.image('resources/slider_top.png')
 ui_slider_bottom = pyglet.resource.image('resources/slider_bottom.png')
 ui_slider_button = pyglet.resource.image('resources/helm_UI/slider_button.png')
 ui_slider_segment = pyglet.resource.image('resources/helm_UI/slider_single.png')
-
-ui_map_markers = pyglet.resource.image("resources/map/markers.png")
-ui_map_markers.anchor_x = ui_map_markers.width/2
-ui_map_markers.anchor_y = ui_map_markers.height/2
 
 # Simple user interface class. All objects are defined relative to 0-100 coordinates on the width
 # and height of the screen.
@@ -352,7 +349,7 @@ class UINavElement(UIComponent):
         for mapelem in self.map.getElements():
             xnorm = max(0, min(1, (((mapelem.x-self.worldx)/self.map.width)-0.5)*(self.getZoomFactor()/10)+0.5))
             ynorm = max(0, min(1, (((mapelem.y-self.worldy)/self.map.height)-0.5)*(self.getZoomFactor()/10)+0.5))
-            ui_map_markers.blit(xt(self.xpos + self.width*xnorm), yt(self.ypos + self.height*ynorm))
+            mapelem.getImage().blit(xt(self.xpos + self.width*xnorm), yt(self.ypos + self.height*ynorm))
             
         pyglet.gl.glDisable(pyglet.gl.GL_BLEND)
         
