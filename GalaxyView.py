@@ -4,6 +4,8 @@ import random
 import math
 import Util
 
+import SkyBox
+
 # This class encapsulates all things to do with displaying a view of the galaxy
 class GalaxyView:
     def __init__(self, window, fov):
@@ -14,6 +16,7 @@ class GalaxyView:
         self.view_fov = fov
         
         self.view_stars = self.generateStars();
+        self.view_skybox = SkyBox.SkyBox(pyglet.resource.image('resources/galaxy_view/skybox1.png'))
         
         # Spaceship Variables
         self.spaceshipSpeed = 0.0
@@ -93,6 +96,10 @@ class GalaxyView:
         self.newRotation = newHeading
         
     def render(self):
+    
+        # Draw the skybox
+
+    
         pyglet.graphics.draw(self.view_numStars, GL_POINTS, ("v3f", self.view_stars))
         # Move the camera
         glLoadIdentity()
@@ -101,4 +108,5 @@ class GalaxyView:
         glRotatef(self.spaceshipRotation[0], 1.0, 0.0, 0.0)
         glRotatef(self.spaceshipRotation[1], 0.0, 1.0, 0.0)
         glRotatef(self.spaceshipRotation[2], 0.0, 0.0, 1.0)
-        glTranslatef(*self.spaceshipPosition)
+        glTranslatef(*self.spaceshipPosition)       
+        
