@@ -16,7 +16,7 @@ class GalaxyView:
         self.view_fov = fov
         
         self.view_stars = self.generateStars();
-        self.view_skybox = SkyBox.SkyBox(pyglet.resource.image('resources/galaxy_view/skybox1.png'))
+        self.view_skybox = SkyBox.SkyBox(pyglet.resource.image('resources/galaxy_view/skybox1_p3.png'))
         
         # Spaceship Variables
         self.spaceshipSpeed = 0.0
@@ -96,6 +96,10 @@ class GalaxyView:
         self.newRotation = newHeading
         
     def render(self):
+    
+        # Draw the skybox
+        self.view_skybox.draw(self.spaceshipRotation[0], self.spaceshipRotation[1])      
+        
         # Move the camera
         glLoadIdentity()
         
@@ -105,8 +109,5 @@ class GalaxyView:
         glRotatef(self.spaceshipRotation[2], 0.0, 0.0, 1.0)
         glTranslatef(*self.spaceshipPosition)
         
-        pyglet.graphics.draw(self.view_numStars, GL_POINTS, ("v3f", self.view_stars))
-        
-        # Draw the skybox
-        self.view_skybox.draw(self.spaceshipRotation[0], self.spaceshipRotation[1])       
+        pyglet.graphics.draw(self.view_numStars, GL_POINTS, ("v3f", self.view_stars)) 
         
