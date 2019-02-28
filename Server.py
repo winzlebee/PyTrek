@@ -11,8 +11,8 @@ import MapGenerator
 import Map
 
 # Generate or load a map
-map_size = 64
-mapLoader = MapGenerator.GaussianGenerator(map_size, map_size, 64, 24) # (width, height, spread, number)
+map_size = 32
+mapLoader = MapGenerator.GaussianGenerator(map_size, map_size, 8, 24) # (width, height, spread, number)
 playMap = Map.Map(map_size, map_size, mapLoader)
 
 def recieveTerminalRequest(client, msg):

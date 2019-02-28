@@ -347,8 +347,8 @@ class UINavElement(UIComponent):
         
         # Draw all the map markers
         for mapelem in self.map.getElements():
-            xnorm = max(0, min(1, (((mapelem.x-self.worldx)/self.map.width)-0.5)*(self.getZoomFactor()/10)+0.5))
-            ynorm = max(0, min(1, (((mapelem.y-self.worldy)/self.map.height)-0.5)*(self.getZoomFactor()/10)+0.5))
+            xnorm = max(0, min(1, (((mapelem.x-self.worldx)/self.map.width)-0.5)*(self.getZoomFactor())+0.5))
+            ynorm = max(0, min(1, (((mapelem.y-self.worldy)/self.map.height)-0.5)*(self.getZoomFactor())+0.5))
             mapelem.getImage().blit(xt(self.xpos + self.width*xnorm), yt(self.ypos + self.height*ynorm))
             
         pyglet.gl.glDisable(pyglet.gl.GL_BLEND)
