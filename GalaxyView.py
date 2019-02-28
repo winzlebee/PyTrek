@@ -96,11 +96,6 @@ class GalaxyView:
         self.newRotation = newHeading
         
     def render(self):
-    
-        # Draw the skybox
-
-    
-        pyglet.graphics.draw(self.view_numStars, GL_POINTS, ("v3f", self.view_stars))
         # Move the camera
         glLoadIdentity()
         
@@ -108,5 +103,10 @@ class GalaxyView:
         glRotatef(self.spaceshipRotation[0], 1.0, 0.0, 0.0)
         glRotatef(self.spaceshipRotation[1], 0.0, 1.0, 0.0)
         glRotatef(self.spaceshipRotation[2], 0.0, 0.0, 1.0)
-        glTranslatef(*self.spaceshipPosition)       
+        glTranslatef(*self.spaceshipPosition)
+        
+        pyglet.graphics.draw(self.view_numStars, GL_POINTS, ("v3f", self.view_stars))
+        
+        # Draw the skybox
+        self.view_skybox.draw(self.spaceshipRotation[0], self.spaceshipRotation[1])       
         

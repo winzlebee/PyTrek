@@ -1,16 +1,25 @@
 
 from pyglet.gl import *
 
+# Use shaders to form a skybox (in this case, a spacebox)
 class SkyBox(object):
     r = 50.0
+    # Coordinates for a cube, listed below
+    # close bottom left (0), close top left (1), close top right (2), close bottom right (3)
+    # far bottom left (4), far top left(5), far top right (6), far bottom right (7)
     coords = [
-    (( r, -r, -1), ( r,  r, -1), (-r,  r, -1), (-r, -r, -1)), # ft
-    ((-r, -r,  1), (-r,  r,  1), ( r,  r,  1), ( r, -r,  1)), # bk
-    ((-1, -r, -r), (-1,  r, -r), (-1,  r,  r), (-1, -r,  r)), # lt
-    (( 1, -r,  r), ( 1,  r,  r), ( 1,  r, -r), ( 1, -r, -r)), # rt
-    (( r,  1,  r), (-r,  1,  r), (-r,  1, -r), ( r,  1, -r)), # up
-    ((-r, -1,  r), ( r, -1,  r), ( r, -1, -r), (-r, -1, -r)) # dn
-    ]   
+        -r, -r, -r, -r, r, -r, r, r, -r, r, -r, -r,
+        -r, -r, r, -r, r, r, r, r, r, r, -r, r
+    ]
+    
+    indices = [
+        0, 1, 2, 0, 3, 2, # Front face
+        0, 4, 5, 0, 1, 5, # Left face
+        4, 5, 6, 4, 7, 6, # Back face
+        3, 7, 6, 3, 2, 6, # Right face
+        1, 5, 6, 1, 2, 6, # Top Face
+        0, 4, 7, 0, 3, 7  # Bottom Face
+    ]
 
     def __init__(self, texture):
         self.texture = texture
@@ -23,33 +32,16 @@ class SkyBox(object):
         self.texcoords.append(self.texture.get_region(x=2048, y=1024, width=1024, height=1024).get_texture())
         self.texcoords.append(self.texture.get_region(x=0, y=1024, width=1024, height=1024).get_texture())
     
-    def draw(self):
-        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT)
-        glDisable(GL_DEPTH_TEST)
-        glDisable(GL_LIGHTING)
-        glDisable(GL_CULL_FACE)
-        glColor3f(1.0, 1.0, 1.0)
+    def draw(self, rotx, roty):
+        #glDisable(GL_DEPTH_TEST)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
         glLoadIdentity()
         
-        # Draw the skybox
-        num = 0
-        for texture in self.texcoords:
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(texture.target, texture.id)
-            glEnable(texture.target)
-            glTexParameteri(texture.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-            glTexParameteri(texture.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
-            glBegin(GL_QUADS)
-            glTexCoord2f(0.0, 0.0)
-            glVertex3f(*self.coords[num][0])
-            glTexCoord2f(0.0, 1.0)
-            glVertex3f(*self.coords[num][1])
-            glTexCoord2f(1.0, 1.0)
-            glVertex3f(*self.coords[num][2])
-            glTexCoord2f(1.0, 0.0)
-            glVertex3f(*self.coords[num][3])
-            glEnd()
-            num += 1
-            
-        glPopAttrib()
+        glRotatef(rotx, 1.0, 0.0, 0.0)
+        glRotatef(roty, 0.0, 1.0, 0.0)
+        
+        pyglet.graphics.draw_indexed(8, GL_TRIANGLES, self.indices, ('v3f', self.coords))
+        
+        #glEnable(GL_DEPTH_TEST)
+        
 
