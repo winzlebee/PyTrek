@@ -9,6 +9,7 @@ Art assets TODO
 - Find a cool font to use
 - Different ship models
 - Redesign buttons and sliders (?)
+- Redo the skybox for the main display
 
 Programming TODO
 - Add network client that's able to command the ship - DONE
@@ -22,18 +23,24 @@ Programming TODO
 - Map class and map random generation - DONE
 - View map components on helm and download map - DONE
 - Make the ship move on the helm's screen - DONE
-- Add 3D models for map items to the main screen
-    - Make sure movement matches view on helm
-    - Skybox
+- Add 3D models for map items to the main screen - DONE
+    - Add placeholder 3d model for map - DONE
+    - Make sure movement matches view on helm - DONE
+    - Skybox - DONE
+- Update light to come from the correct direction
 - Map view for main display
 - Make client send keepalive messages at least every 60 seconds
 - Allow the network client to change the main view to the map
+- Obj model loader
 - Add items that go on the map 
     - Star Systems
     - Space Stations (And shops!)
     - Asteroid fields
     - Planets
-- Add spaceship model/Enemy fighters
+- Redesign stars to make them billboard squares
+- Add spaceship model
+- Add Enemy fighters
+- Health bars/targeting indicators above enemy fighters
 - Basic enemy ship AI
 - Weapons targeting module
 - Refueling & Weapon inventory
@@ -45,7 +52,7 @@ Programming TODO
 
 Long term
 - Engineering module platformer
-- Tractor beam
+- Tractor beam (weapons module)
 
 ANNOYANCES AND BUGS
 - Clip the map view to only the dimensions of it's viewport (fix snipping) - PARTIALLY DONE

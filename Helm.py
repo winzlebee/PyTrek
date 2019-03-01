@@ -28,7 +28,7 @@ shipImg = pyglet.resource.image("resources/ship_fighter.png")
 shipImg.anchor_x = shipImg.width/2
 shipImg.anchor_y = shipImg.height/2
 
-pt_ui_initialZoom = 5
+pt_ui_initialZoom = 2
 
 pt_ui_navElement = UserInterface.UINavElement("navigation", 20, 15, 70, 70, True, shipImg, pt_ui_initialZoom)
 

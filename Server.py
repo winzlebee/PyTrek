@@ -12,7 +12,7 @@ import Map
 
 # Generate or load a map
 map_size = 32
-mapLoader = MapGenerator.GaussianGenerator(map_size, map_size, 8, 24) # (width, height, spread, number)
+mapLoader = MapGenerator.GaussianGenerator(map_size, map_size, 16, 24) # (width, height, spread, number)
 playMap = Map.Map(map_size, map_size, mapLoader)
 
 def recieveTerminalRequest(client, msg):
@@ -44,7 +44,7 @@ mainView.loadMap(playMap)
 
 @window.event
 def on_draw():
-    pyglet.gl.glClear(pyglet.gl.GL_COLOR_BUFFER_BIT)
+    pyglet.gl.glClear(pyglet.gl.GL_COLOR_BUFFER_BIT | pyglet.gl.GL_DEPTH_BUFFER_BIT)
     mainView.render()
 
 pyglet.app.run()

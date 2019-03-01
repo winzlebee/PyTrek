@@ -254,7 +254,6 @@ class UINavElement(UIComponent):
                 self.rotating = True
                 
             self.setClickHandler(clickHandler)
-        
     def setZoomLevel(self, level):
         self.zoomLevel = level
         
@@ -326,7 +325,7 @@ class UINavElement(UIComponent):
         pyglet.gl.glScissor(round(xt(self.xpos)), round(yt(self.ypos)), round(xt(self.xpos + self.width/1.4)), round(yt(self.ypos+self.height/1.25)))
         # Draw a grid, making sure that the specified zoom level of squares are displayed
 
-        pyglet.gl.glEnable(pyglet.gl.GL_SCISSOR_TEST)
+        #pyglet.gl.glEnable(pyglet.gl.GL_SCISSOR_TEST)
         
         pyglet.graphics.draw((round(numLines/2)-1)*8, pyglet.gl.GL_LINES,
             ('v2f', lines))
@@ -337,7 +336,7 @@ class UINavElement(UIComponent):
         pyglet.graphics.draw(500, pyglet.gl.GL_POINTS,
             ('v2f', self.proceduralStars))
             
-        pyglet.gl.glDisable(pyglet.gl.GL_SCISSOR_TEST)
+        #pyglet.gl.glDisable(pyglet.gl.GL_SCISSOR_TEST)
             
         pyglet.gl.glLoadIdentity()
         

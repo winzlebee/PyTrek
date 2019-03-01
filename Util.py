@@ -19,4 +19,4 @@ def getRotationInterval(timePassed, rotationSpeed, oldDirection, newDirection):
     return abs(timePassed/(shortAngleDist(oldDirection, newDirection)/rotationSpeed))
 
 def getSpeedFromWarpImpulse(warp, impulse):
-    return warp + (impulse*0.1)
+    return warp**3 + (impulse*0.01)

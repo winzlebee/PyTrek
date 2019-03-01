@@ -1,5 +1,6 @@
 
 import pyglet
+import random
 import MapGenerator
 
 # Atlas containing all of the map markers
@@ -37,6 +38,7 @@ class MapObject(object):
         self.name = name
         self.x = xpos
         self.y = ypos
+        self.h = (random.random()-0.5)*2
         
         self.img = 'marker'
         

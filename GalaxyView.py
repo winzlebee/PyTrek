@@ -1,10 +1,14 @@
 from pyglet.gl import *
+import pywavefront
+from pywavefront import visualization
 
 import random
 import math
 import Util
 
 import SkyBox
+
+asteroid_model = pywavefront.Wavefront('resources/galaxy_view/asteroid.obj')
 
 # This class encapsulates all things to do with displaying a view of the galaxy
 class GalaxyView:
@@ -63,6 +67,7 @@ class GalaxyView:
         self.spaceshipPosition = [self.spaceshipPosition[0] + movement*math.cos(math.radians(self.spaceshipRotation[1]+90)),
                                   self.spaceshipPosition[1],
                                   self.spaceshipPosition[2] + movement*math.sin(math.radians(self.spaceshipRotation[1]+90))]
+                                  
         #self.spaceshipPosition = [x + y for x, y in zip(self.spaceshipPosition, movement)]
         
     def rotate(self, rotation):
@@ -96,7 +101,6 @@ class GalaxyView:
         self.newRotation = newHeading
         
     def render(self):
-    
         # Draw the skybox
         self.view_skybox.draw(self.spaceshipRotation[0], self.spaceshipRotation[1])      
         
@@ -109,5 +113,19 @@ class GalaxyView:
         glRotatef(self.spaceshipRotation[2], 0.0, 0.0, 1.0)
         glTranslatef(*self.spaceshipPosition)
         
-        pyglet.graphics.draw(self.view_numStars, GL_POINTS, ("v3f", self.view_stars)) 
+        pyglet.graphics.draw(self.view_numStars, GL_POINTS, ("v3f", self.view_stars))
+        
+        glEnable(GL_DEPTH_TEST)
+        
+        for mapElem in self.map.getElements():
+            glLoadIdentity()
+            glRotatef(self.spaceshipRotation[0], 1.0, 0.0, 0.0)
+            glRotatef(self.spaceshipRotation[1], 0.0, 1.0, 0.0)
+            glRotatef(self.spaceshipRotation[2], 0.0, 0.0, 1.0)
+            glTranslatef(*self.spaceshipPosition)
+            
+            glTranslatef(mapElem.x-(self.map.width//2), mapElem.h, -(mapElem.y-(self.map.height//2)))
+            
+            visualization.draw(asteroid_model)
+        glDisable(GL_DEPTH_TEST)
         
