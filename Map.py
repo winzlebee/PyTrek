@@ -40,6 +40,9 @@ class MapObject(object):
         self.y = ypos
         self.h = (random.random()-0.5)*2
         
+        # Random rotation
+        self.orientation = bool(random.getrandbits(1))
+        
         self.img = 'marker'
         
     def getImage(self):
