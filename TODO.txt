@@ -27,15 +27,15 @@ Programming TODO
     - Add placeholder 3d model for map - DONE
     - Make sure movement matches view on helm - DONE
     - Skybox - DONE
-- Update light to come from the correct direction
+- Update light to come from the correct direction - DONE
 - Map view for main display
 - Make client send keepalive messages at least every 60 seconds
 - Allow the network client to change the main view to the map
-- Obj model loader
+- Obj model loader - DONE
 - Add items that go on the map 
     - Star Systems
     - Space Stations (And shops!)
-    - Asteroid fields
+    - Asteroid fields - DONE
     - Planets
 - Redesign stars to make them billboard squares
 - Add spaceship model
@@ -49,6 +49,8 @@ Programming TODO
 - Helm UI Refactor for efficiency
     - Remove fixed-function OpenGL calls and replace with grid image and star images
     - Only update the display when something changes, not on render.
+    - Reverse option for helm
+    - Ability to bring shields up
 
 Long term
 - Engineering module platformer

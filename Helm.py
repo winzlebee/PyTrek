@@ -19,7 +19,13 @@ window = pyglet.window.Window(1280, 720, resizable=True)
 helm_ui = UserInterface.PyTrekUserInterface(window)
 
 def onclick_mapBtn(x, y):
-    print("Map button has been clicked.")
+  msg = pickle.dumps(messages.ViewChangeMessage(1))
+  helm_client.sendMessage(msg)
+    
+def onclick_visualBtn(x, y):
+  msg = pickle.dumps(messages.ViewChangeMessage(0))
+  helm_client.sendMessage(msg)
+    
 
 # UI Components for the helm
 
@@ -37,6 +43,7 @@ pt_ui_mapBtn = UserInterface.UIButton("mapBtn", "Map", 100-16, 100-9)
 pt_ui_visBtn = UserInterface.UIButton("mapBtn", "Visual", 100-32, 100-9)
 pt_ui_engBtn = UserInterface.UIButton("mapBtn", "Engineering", 100-48, 100-9)
 pt_ui_mapBtn.setClickHandler(onclick_mapBtn)
+pt_ui_visBtn.setClickHandler(onclick_visualBtn)
 
 # Sliders
 pt_ui_sliderGroupImage = pyglet.resource.image("resources/helm_UI/background.png")

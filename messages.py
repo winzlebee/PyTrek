@@ -18,3 +18,6 @@ class MapMessage(Message):
         # Map object should be serializable so simply use it raw
         self.map = mapObj
     
+class ViewChangeMessage(Message):
+    def __init__(self, mapType):
+        self.view = mapType;

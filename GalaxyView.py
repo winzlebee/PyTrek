@@ -101,6 +101,7 @@ class GalaxyView:
         self.newRotation = newHeading
         
     def render(self):
+        glLoadIdentity()
         # Draw the skybox
         self.view_skybox.draw(self.spaceshipRotation[0], self.spaceshipRotation[1])      
         

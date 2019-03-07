@@ -321,8 +321,10 @@ class UINavElement(UIComponent):
                           
             lines.extend([xt(self.xpos+self.width), yt(self.ypos+self.height/2)-(interval/100*yt(self.height)),
                           xt(self.xpos), yt(self.ypos+self.height/2)-(interval/100*yt(self.height))])
-      
-        pyglet.gl.glScissor(round(xt(self.xpos)), round(yt(self.ypos)), round(xt(self.xpos + self.width/1.4)), round(yt(self.ypos+self.height/1.25)))
+        
+        pyglet.gl.glLoadIdentity()    
+        
+        #pyglet.gl.glScissor(round(xt(self.xpos)), round(yt(self.ypos)), round(xt(self.xpos + self.width/1.4)), round(yt(self.ypos+self.height/1.25)))
         # Draw a grid, making sure that the specified zoom level of squares are displayed
 
         #pyglet.gl.glEnable(pyglet.gl.GL_SCISSOR_TEST)
