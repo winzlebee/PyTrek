@@ -8,7 +8,7 @@ import Util
 
 import SkyBox
 
-asteroid_model = (pywavefront.Wavefront('resources/galaxy_view/asteroid.obj'), pywavefront.Wavefront('resources/galaxy_view/asteroid_180.obj'))
+asteroid_model = pywavefront.Wavefront('resources/galaxy_view/asteroid.obj')
 
 # This class encapsulates all things to do with displaying a view of the galaxy
 class GalaxyView:
@@ -129,9 +129,9 @@ class GalaxyView:
             
             if mapElem.orientation: 
                 glRotatef(180.0, 0.0, 1.0, 0.0);
-                visualization.draw(asteroid_model[0])
+                visualization.draw(asteroid_model)
             else:
-                visualization.draw(asteroid_model[1])
+                visualization.draw(asteroid_model)
 
         glDisable(GL_DEPTH_TEST)
         
